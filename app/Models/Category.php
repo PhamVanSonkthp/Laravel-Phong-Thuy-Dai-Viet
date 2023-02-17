@@ -17,7 +17,7 @@ class Category extends Model implements Auditable
     use DeleteModelTrait;
     use StorageImageTrait;
 
-    public function getCategory($parent_id = null){
+    public static function getCategory($parent_id = null){
         $data = Category::all();
         $recusive = new Recusive($data);
         $htmlOption = $recusive->categoryRecusive($parent_id);

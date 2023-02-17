@@ -17,7 +17,7 @@ class Formatter extends Model
 {
     use HasFactory;
 
-    public function getLimitRequest($limit)
+    public static function getLimitRequest($limit)
     {
         if (!empty($limit)) {
             return (int)$limit;

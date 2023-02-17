@@ -30,7 +30,7 @@ class AuthController extends Controller
             'name' => 'required|string',
             'phone' => 'required|string|unique:users',
             'password' => 'required|string',
-            'date_of_birth' => 'required|date_format:Y-m-d H:i',
+            'date_of_birth' => 'date_format:Y-m-d H:i',
             'firebase_uid' => 'required|string',
         ]);
 

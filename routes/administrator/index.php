@@ -627,6 +627,12 @@ Route::prefix('administrator')->group(function () {
             'middleware'=>'can:products-list',
         ]);
 
+        Route::post('/import', [
+            'as'=>'administrator.products.import',
+            'uses'=>'App\Http\Controllers\Admin\ProductController@import',
+            'middleware'=>'can:products-add',
+        ]);
+
         Route::get('/{id}', [
             'as' => 'administrator.products.get',
             'uses' => 'App\Http\Controllers\Admin\ProductController@get',
