@@ -42,7 +42,7 @@ class JobEmail extends Command
 
         foreach ($jobEmails as $jobEmail) {
             if (!empty($jobEmail->user)){
-                $jobEmail->user->notify(new Notifications($jobEmail->title, $jobEmail->content, $jobEmail->user));
+                $jobEmail->user->notify(new Notifications($jobEmail->title, $jobEmail->content));
             }
             $jobEmail->delete();
         }

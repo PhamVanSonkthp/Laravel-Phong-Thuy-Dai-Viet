@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use PHPUnit\Exception;
 
 class Helper extends Model
 {
@@ -338,41 +339,47 @@ class Helper extends Model
         }
 
         if (env('FIREBASE_SERVER_NOTIFIABLE', true)) {
-            $client = new Client();
-            $client->post(
-                'https://fcm.googleapis.com/fcm/send',
-                [
-                    'headers' => [
-                        'Content-Type' => 'application/json',
-                        'Authorization' => env('FIREBASE_SERVER_KEY')],
-                    'json' => [
-                        'to' => '/topics/' . $topicName,
-                        'notification' => [
-                            'title' => $title,
-                            'body' => $body,
-                            "click_action" => "TOP_STORY_ACTIVITY",
-                        ],
-                        'apns' => [
-                            'headers' => [
-                                'apns-priority' => '10'
-                            ],
-                            'payload' => [
-                                'aps' => [
-                                    'sound' => 'notification'
-                                ]
-                            ],
-                        ],
-                        'android' => [
-                            'priority' => 'high',
+
+            try {
+                $client = new Client();
+                $client->post(
+                    'https://fcm.googleapis.com/fcm/send',
+                    [
+                        'headers' => [
+                            'Content-Type' => 'application/json',
+                            'Authorization' => env('FIREBASE_SERVER_KEY')],
+                        'json' => [
+                            'to' => '/topics/' . $topicName,
                             'notification' => [
-                                'sound' => 'notification'
+                                'title' => $title,
+                                'body' => $body,
+                                "click_action" => "TOP_STORY_ACTIVITY",
+                            ],
+                            'apns' => [
+                                'headers' => [
+                                    'apns-priority' => '10'
+                                ],
+                                'payload' => [
+                                    'aps' => [
+                                        'sound' => 'notification'
+                                    ]
+                                ],
+                            ],
+                            'android' => [
+                                'priority' => 'high',
+                                'notification' => [
+                                    'sound' => 'notification'
+                                ],
                             ],
                         ],
+                        'timeout' => 1, // Response timeout
+                        'connect_timeout' => 1, // Connection timeout
                     ],
-                    'timeout' => 1, // Response timeout
-                    'connect_timeout' => 1, // Connection timeout
-                ],
-            );
+                );
+            }catch (Exception $e){
+
+            }
+
         }
 
     }
