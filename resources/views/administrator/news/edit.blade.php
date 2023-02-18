@@ -25,6 +25,8 @@
                         @enderror
                     </div>
 
+                    @include('administrator.components.select_category' , ['name' => 'category_id' ,'html_category' => \App\Models\CategoryNew::getCategory(isset($item) ? optional($item)->category_id : ''), 'can_create' => true])
+
                     @if($isSingleImage)
                         <div class="mt-3 mb-3">
                             @include('administrator.components.upload_image', ['post_api' => route('ajax,administrator.upload_image.store'), 'table' => 'news' , 'image' => optional($item->image)->image_path, 'relate_id' => $item->id])

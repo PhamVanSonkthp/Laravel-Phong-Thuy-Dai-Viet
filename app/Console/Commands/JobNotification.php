@@ -106,7 +106,5 @@ class JobNotification extends Command
             Helper::sendNotificationToTopic(env('FIREBASE_TOPIC_ALL_N1','app'), $item['title'], $item['description']);
         }
 
-        Helper::sendNotificationToTopic(env('FIREBASE_TOPIC_ALL_N1','app'), "hello", "abcd");
-
     }
 }

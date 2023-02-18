@@ -30,6 +30,7 @@
                                     <th>#</th>
                                     <th>Tiêu đề</th>
                                     <th>Hình ảnh</th>
+                                    <th>Danh mục</th>
                                     <th>Thời gian tạo</th>
                                     <th>Hành động</th>
                                 </tr>
@@ -43,6 +44,7 @@
                                         <td>
                                             <img class="rounded-circle" src="{{$item->avatar()}}" alt="">
                                         </td>
+                                        <td>{{ optional($item->category)->name}}</td>
                                         <td>{{\App\Models\Formatter::getDateTime($item->created_at)}}</td>
                                         <td>
                                             <a href="{{route('administrator.'.$prefixView.'.edit' , ['id'=> $item->id ])}}"

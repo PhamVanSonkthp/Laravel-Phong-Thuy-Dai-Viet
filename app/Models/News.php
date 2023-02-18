@@ -70,6 +70,7 @@ class News extends Model implements Auditable
         $dataInsert = [
             'title' => $request->title,
             'content' => $request->contents,
+            'category_id' => $request->category_id ?? 0,
             'slug' => Helper::addSlug($this,'slug', $request->title),
         ];
 
@@ -83,6 +84,7 @@ class News extends Model implements Auditable
         $dataUpdate = [
             'title' => $request->title,
             'content' => $request->contents,
+            'category_id' => $request->category_id ?? 0,
             'slug' => Helper::addSlug($this,'slug', $request->title),
         ];
         $item = Helper::updateByQuery($this, $request, $id, $dataUpdate);

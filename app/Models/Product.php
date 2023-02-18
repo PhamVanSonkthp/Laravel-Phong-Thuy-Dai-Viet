@@ -295,61 +295,111 @@ class Product extends Model implements Auditable
     public function storeByQuery($request)
     {
 
-//        if (isset($request->headers) && isset($request->attributes) && !empty($request->headers) && !empty($request->attributes)){
-//            $headers = json_decode($request->headers);
-//            $attributes = json_decode($request->attributes);
-//
-//            if (count($headers) == 1){
-//                app('rinvex.attributes.attribute')->create([
-//                    'slug' => Formatter::slug($headers[0]),
-//                    'type' => 'varchar',
-//                    'name' => ['vi' => $headers[0], 'en' => $headers[0]],
-//                    'entities' => ['App\Models\Product'],
-//                ]);
-//
-//                for ($i = 0 ; $i < count($attributes[0]);$i++){
-//
-//                    $dataInsert = [
-//                        'name' => $request->name,
-//                        'short_description' => $request->short_description,
-//                        'description' => $request->description,
-//                        'slug' => Helper::addSlug($this,'slug', $request->title),
-//                        'price_import' => Formatter::formatMoneyToDatabase($request->price_import),
-//                        'price_client' => Formatter::formatMoneyToDatabase($request->price_client),
-//                        'price_agent' => Formatter::formatMoneyToDatabase($request->price_agent),
-//                        'price_partner' => Formatter::formatMoneyToDatabase($request->price_partner),
-//                        'category_id' => $this->firstOrCreateCategory($request->category_id),
-//                        'inventory' => Formatter::formatNumberToDatabase($request->inventory),
-//                    ];
-//
-//                    $item = Helper::storeByQuery($this, $request, $dataInsert);
-//
-//                    $item->fill([Formatter::slug($headers[0]) => $attributes[0][$i]])->save();
-//                }
-//            }else{
-//
-//            }
-//
-//        }else{
-//
-//        }
+        $group_product_id = 2;
 
-        $dataInsert = [
-            'name' => $request->name,
-            'short_description' => $request->short_description,
-            'description' => $request->description,
-            'slug' => Helper::addSlug($this,'slug', $request->title),
-            'price_import' => Formatter::formatMoneyToDatabase($request->price_import),
-            'price_client' => Formatter::formatMoneyToDatabase($request->price_client),
-            'price_agent' => Formatter::formatMoneyToDatabase($request->price_agent),
-            'price_partner' => Formatter::formatMoneyToDatabase($request->price_partner),
-            'category_id' => $this->firstOrCreateCategory($request->category_id),
-            'inventory' => Formatter::formatNumberToDatabase($request->inventory),
-        ];
+        $productLatest = Product::latest()->first();
 
-        $item = Helper::storeByQuery($this, $request, $dataInsert);
+        if (!empty($productLatest)){
+            $group_product_id = $productLatest->id +1;
+        }
 
-        return $this->findById($item->id);
+        $product_visibility_id = 2;
+
+        if (isset($request->_headers) && isset($request->_attributes) && !empty($request->_headers) && !empty($request->_attributes)){
+            $_headers = json_decode($request->_headers);
+            $_attributes = json_decode($request->_attributes);
+
+            if (count($_headers) == 1){
+
+                for ($i = 0 ; $i < count($_attributes[0]);$i++){
+
+                    $dataInsert = [
+                        'name' => $request->name,
+                        'short_description' => $request->short_description,
+                        'description' => $request->description,
+                        'slug' => Helper::addSlug($this,'slug', $request->name),
+                        'price_import' => Formatter::formatMoneyToDatabase($request->import_prices[$i]),
+                        'price_client' => Formatter::formatMoneyToDatabase($request->client_prices[$i]),
+                        'price_agent' => Formatter::formatMoneyToDatabase($request->agent_prices[$i]),
+                        'price_partner' => Formatter::formatMoneyToDatabase($request->partner_prices[$i]),
+                        'category_id' => $this->firstOrCreateCategory($request->category_id),
+                        'inventory' => Formatter::formatNumberToDatabase($request->inventories[$i]),
+                        'sku' => Formatter::formatNumberToDatabase($request->skus[$i]),
+                        'group_product_id' => $group_product_id,
+                        'product_visibility_id' => $product_visibility_id,
+                    ];
+
+                    $product_visibility_id = 1;
+
+                    $item = Helper::storeByQuery($this, $request, $dataInsert);
+
+                    $attr = [];
+                    $attr['size'] = $_attributes[0][$i];
+
+                    $item->fill($attr)->save();
+                }
+            }else{
+
+                $pointer = 0;
+
+                for ($i = 0 ; $i < count($_attributes[0]);$i++){
+
+                    for ($j = 0 ; $j < count($_attributes[1]);$j++){
+                        $dataInsert = [
+                            'name' => $request->name,
+                            'short_description' => $request->short_description,
+                            'description' => $request->description,
+                            'slug' => Helper::addSlug($this,'slug', $request->name),
+                            'price_import' => Formatter::formatMoneyToDatabase($request->import_prices[$pointer]),
+                            'price_client' => Formatter::formatMoneyToDatabase($request->client_prices[$pointer]),
+                            'price_agent' => Formatter::formatMoneyToDatabase($request->agent_prices[$pointer]),
+                            'price_partner' => Formatter::formatMoneyToDatabase($request->partner_prices[$pointer]),
+                            'category_id' => $this->firstOrCreateCategory($request->category_id),
+                            'inventory' => Formatter::formatNumberToDatabase($request->inventories[$pointer]),
+                            'sku' => Formatter::formatNumberToDatabase($request->skus[$pointer]),
+                            'group_product_id' => $group_product_id,
+                            'product_visibility_id' => $product_visibility_id,
+                        ];
+
+                        $product_visibility_id = 1;
+
+                        $item = Helper::storeByQuery($this, $request, $dataInsert);
+
+                        $attr = [];
+                        $attr['size'] = $_attributes[0][$i];
+                        $attr['color'] = $_attributes[1][$j];
+
+                        $item->fill($attr)->save();
+
+                        $pointer++;
+                    }
+
+                }
+
+            }
+
+        }else{
+            $dataInsert = [
+                'name' => $request->name,
+                'short_description' => $request->short_description,
+                'description' => $request->description,
+                'slug' => Helper::addSlug($this,'slug', $request->name),
+                'price_import' => Formatter::formatMoneyToDatabase($request->price_import),
+                'price_client' => Formatter::formatMoneyToDatabase($request->price_client),
+                'price_agent' => Formatter::formatMoneyToDatabase($request->price_agent),
+                'price_partner' => Formatter::formatMoneyToDatabase($request->price_partner),
+                'category_id' => $this->firstOrCreateCategory($request->category_id),
+                'inventory' => Formatter::formatNumberToDatabase($request->inventory),
+                'product_visibility_id' => $product_visibility_id,
+                'group_product_id' => $group_product_id,
+            ];
+
+            $item = Helper::storeByQuery($this, $request, $dataInsert);
+
+            return $this->findById($item->id);
+        }
+
+
     }
 
     public function updateByQuery($request, $id)

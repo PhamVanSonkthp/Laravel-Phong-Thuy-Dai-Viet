@@ -25,6 +25,8 @@
                         @enderror
                     </div>
 
+                    @include('administrator.components.select_category' , ['name' => 'category_id' ,'html_category' => \App\Models\CategoryNew::getCategory(isset($item) ? optional($item)->category_id : ''), 'can_create' => true])
+
                     <div class="form-group mt-3">
 
                         @if($isSingleImage)

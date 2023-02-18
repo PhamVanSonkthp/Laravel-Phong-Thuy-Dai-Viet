@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Components\Recusive;
 use App\Traits\DeleteModelTrait;
 use App\Traits\StorageImageTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,6 +23,28 @@ class CategoryNew extends Model implements Auditable
 
 
     // end
+
+    public static function getCategory($parent_id = null){
+        $data = CategoryNew::all();
+        $recusive = new Recusive($data);
+        $htmlOption = $recusive->categoryRecusive($parent_id);
+
+        return $htmlOption;
+    }
+
+    public function rootParent($itemCurrent = null)
+    {
+        if(!empty($itemCurrent)){
+            $item = Category::find($itemCurrent->parent_id);
+        }else{
+            $item = $this;
+        }
+
+        if (empty($item)) {
+            return $itemCurrent;
+        }
+        return $this->rootParent($item);
+    }
 
     public function toArray()
     {
