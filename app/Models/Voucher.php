@@ -28,6 +28,48 @@ class Voucher extends Model implements Auditable
         return !empty($this->discount_amount) ? 1 : 2;
     }
 
+    public function amountDiscount($amount){
+        if ($this->typeVoucher() == 1){
+            return $this->discount_amount;
+        }else{
+            $discount = ($this->discount_percent / 100) * $amount;
+
+            if ($discount > $this->max_discount_percent_amount) return $this->max_discount_percent_amount;
+
+            return $discount;
+        }
+    }
+
+    public function isLimited(): bool
+    {
+        if ($this->used >= $this->max_use_by_time) return false;
+        if ($this->used >= $this->max_use_by_user) return false;
+
+        return true;
+    }
+    public function isLimitedByUser(): bool
+    {
+
+        $total = VoucherUsed::where('user_id', auth()->id())->where('voucher_id', $this->id)->count();
+
+        return $total >= $this->max_use_by_user;
+    }
+
+    public function isExpired(): bool
+    {
+        return now() > $this->end;
+    }
+
+    public function isUnavailable(): bool
+    {
+        return now() < $this->begin;
+    }
+
+    public function isAcceptAmount($amount): bool
+    {
+        return $this->min_amount >= $amount;
+    }
+
     // end
 
     public function getTableName()

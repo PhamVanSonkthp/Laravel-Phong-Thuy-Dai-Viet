@@ -80,16 +80,26 @@ class VoucherController extends Controller
             $voucher = Voucher::where('code', $request->voucher_id)->first();
         }
 
-        if (empty($voucher)){
-            return response()->json(Helper::errorAPI(99,[],"voucher_id invalid") , 400);
-        }
+        if (empty($voucher)) return response()->json(Helper::errorAPI(99,[],"voucher_id invalid") , 400);
 
+        if ($voucher->isLimited()) return response()->json(Helper::errorAPI(99,[],"voucher is limited") , 400);
 
+        if ($voucher->isLimitedByUser()) return response()->json(Helper::errorAPI(99,[],"voucher is limited by user") , 400);
 
+        if ($voucher->isExpired()) return response()->json(Helper::errorAPI(99,[],"voucher is is expired") , 400);
 
-        $item->refresh();
+        if ($voucher->isUnavailable()) return response()->json(Helper::errorAPI(99,[],"voucher is is unavailable") , 400);
 
-        return response()->json($item);
+        $amount = UserCart::calculateAmountByIds($request->cart_ids);
+
+        if ($voucher->isAcceptAmount($amount)) return response()->json(Helper::errorAPI(99,[],"voucher is is unavailable") , 400);
+
+        $discount = $voucher->amountDiscount($amount);
+
+        return response()->json([
+            'message' => "success",
+            'discount' => floor($discount),
+        ]);
     }
 
 }
