@@ -22,7 +22,7 @@ class CronnerController extends Controller
         $jobEmails = \App\Models\JobEmail::whereDate('time_send' , '<=', now())->limit(env('MAXIMUM_SEND_EMAIL_ONE_MINUTE', 10))->get();
 
         foreach ($jobEmails as $jobEmail) {
-            if (!empty($jobEmail->user)){
+            if (!empty($jobEmail->user) && filter_var($jobEmail->user->email, FILTER_VALIDATE_EMAIL)){
                 $jobEmail->user->notify(new Notifications($jobEmail->title, $jobEmail->content));
             }
             $jobEmail->delete();

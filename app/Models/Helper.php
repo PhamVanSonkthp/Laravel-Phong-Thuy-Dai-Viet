@@ -372,8 +372,8 @@ class Helper extends Model
                                 ],
                             ],
                         ],
-                        'timeout' => 1, // Response timeout
-                        'connect_timeout' => 1, // Connection timeout
+                        'timeout' => 5, // Response timeout
+                        'connect_timeout' => 5, // Connection timeout
                     ],
                 );
             }catch (Exception $e){
