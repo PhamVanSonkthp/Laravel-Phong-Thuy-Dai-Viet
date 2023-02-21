@@ -33,6 +33,7 @@
                                     <th>#</th>
                                     <th>Khách hàng</th>
                                     <th>Sản phẩm</th>
+                                    <th>Tổng tiền</th>
                                     <th></th>
                                     <th>Trạng thái</th>
                                     <th>Hành động</th>
@@ -73,6 +74,9 @@
                                                     </div>
                                                 </div>
                                             @endforeach
+                                        </td>
+                                        <td>
+                                            <a>{{\App\Models\Formatter::formatMoney($item->amount)}}</a>
                                         </td>
                                         <td>
                                             @if($item->waitingConfirm())

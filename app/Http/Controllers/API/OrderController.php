@@ -17,6 +17,9 @@ use App\Models\RestfulAPI;
 use App\Models\User;
 use App\Models\UserCart;
 use App\Models\UserProductRecent;
+use App\Models\UserVoucher;
+use App\Models\Voucher;
+use App\Models\VoucherUsed;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -40,9 +43,11 @@ class OrderController extends Controller
 
     public function store(Request $request)
     {
+
         $request->validate([
             'cart_ids' => 'required|array|min:1',
             "cart_ids.*" => "required|numeric|min:1",
+            "voucher_id" => "numeric|min:1",
         ]);
 
         DB::beginTransaction();
@@ -50,6 +55,8 @@ class OrderController extends Controller
         $item = $this->model->create([
             'user_id' => auth()->id(),
         ]);
+
+        $amount = 0;
 
         foreach ($request->cart_ids as $cart_id) {
             $cartItem = UserCart::find($cart_id);
@@ -61,6 +68,8 @@ class OrderController extends Controller
                 ], "Mã giỏ hàng không hợp lệ"), 400);
             }
 
+            $amount += $cartItem->product->priceByUser() * $cartItem->quantity;
+
             $orderProduct = OrderProduct::create([
                 'order_id' => $item->id,
                 'product_id' => $cartItem->product_id,
@@ -71,46 +80,86 @@ class OrderController extends Controller
             ]);
 
             $orderProduct->fill(['order_size' => $cartItem->product->size, 'order_color' => $cartItem->product->color])->save();
+        }
 
+        if (isset($request->voucher_id) && !empty($request->voucher_id)) {
+            $voucher = Voucher::find($request->voucher_id);
+
+            if (empty($voucher)) {
+                $voucher = Voucher::where('code', $request->voucher_id)->first();
+            }
+
+            if (empty($voucher)) return response()->json(Helper::errorAPI(99, [], "voucher_id invalid"), 400);
+
+            if ($voucher->isLimited()) return response()->json(Helper::errorAPI(99, [], "voucher is limited"), 400);
+
+            if ($voucher->isLimitedByUser()) return response()->json(Helper::errorAPI(99, [], "voucher is limited by user"), 400);
+
+            if ($voucher->isExpired()) return response()->json(Helper::errorAPI(99, [], "voucher is is expired"), 400);
+
+            if ($voucher->isUnavailable()) return response()->json(Helper::errorAPI(99, [], "voucher is is unavailable"), 400);
+
+            $amount = UserCart::calculateAmountByIds($request->cart_ids);
+
+            if ($voucher->isAcceptAmount($amount)) return response()->json(Helper::errorAPI(99, [], "voucher is is required min amount " . $voucher->min_amount), 400);
+
+            $discount = $voucher->amountDiscount($amount);
+
+            $amount = $amount - $discount;
+
+            if ($amount < 0) $amount = 0;
+
+            VoucherUsed::create([
+                'user_id' => auth()->id(),
+                'voucher_id' => $voucher->id,
+            ]);
+
+            $voucher->increment('used');
+        }
+
+        $item->update([
+            'amount' => $amount
+        ]);
+        foreach ($request->cart_ids as $cart_id) {
+            $cartItem = UserCart::find($cart_id);
             $cartItem->delete();
         }
-
         DB::commit();
 
-        $html = "<p>Thông tin khách hàng</p>";
-        $html .= "<div>Họ và tên: " . auth()->user()->name . "</div>";
-        $html .= "<div>Số điện thoại: " . auth()->user()->phone . "</div>";
-        $html .= "<div>Địa chỉ: " . auth()->user()->address . "</div>";
-
-        $html .= "<p>Danh sách đơn hàng</p>";
-
-        $table = "<table style='width: 100%;border: solid;'>";
-        $table .= "<thead><tr><th style='border: 1px solid;'>Sản phẩm</th><th style='border: 1px solid;'>Số lượng</th></tr></thead>";
-        $table .= "<tbody>";
-        foreach ($item->products as $productItem) {
-
-            $productAttributeHtml = "";
-
-            if (!empty($productItem->order_size) || !empty($productItem->order_color)) {
-                $productAttributeHtml = '<div>Phân loại:<strong>' . Formatter::getShortDescriptionAttribute($productItem->order_size) . '</strong>,<strong>' . Formatter::getShortDescriptionAttribute($productItem->order_color) . '</strong></div>';
-            }
-
-            if (!(strpos($productItem->product_image, 'http') !== false)) {
-                $productItem->product_image = env('APP_URL') . $productItem->product_image;
-            }
-
-            $productsHtml = '<div style="margin-top: 5px;display: flex;gap: 10px;"><div style="flex: 1;"><img style="height: 40px;" src="' . $productItem->product_image . '"></div><div style="flex: 5;"><div>' . $productItem->name . '</div>' . $productAttributeHtml . '</div></div>';
-
-            $table .= "<tr><td>" . $productsHtml . "</td><td style='text-align: center;'>{$productItem->quantity}</td></tr>";
-        }
-
-        $table .= "</tbody>";
-        $table .= "</table>";
-
-        $html .= $table;
-        $html .= "<div style='margin-top: 10px;'>Hãy truy cập <a href='" . route('administrator.orders.index') . "'>" . route('administrator.orders.index') . "</a> để kiểm tra đơn hàng!</div>";
-
-        Helper::sendEmailToShop('Đơn hàng mới!', $html);
+//        $html = "<p>Thông tin khách hàng</p>";
+//        $html .= "<div>Họ và tên: " . auth()->user()->name . "</div>";
+//        $html .= "<div>Số điện thoại: " . auth()->user()->phone . "</div>";
+//        $html .= "<div>Địa chỉ: " . auth()->user()->address . "</div>";
+//
+//        $html .= "<p>Danh sách đơn hàng</p>";
+//
+//        $table = "<table style='width: 100%;border: solid;'>";
+//        $table .= "<thead><tr><th style='border: 1px solid;'>Sản phẩm</th><th style='border: 1px solid;'>Số lượng</th></tr></thead>";
+//        $table .= "<tbody>";
+//        foreach ($item->products as $productItem) {
+//
+//            $productAttributeHtml = "";
+//
+//            if (!empty($productItem->order_size) || !empty($productItem->order_color)) {
+//                $productAttributeHtml = '<div>Phân loại:<strong>' . Formatter::getShortDescriptionAttribute($productItem->order_size) . '</strong>,<strong>' . Formatter::getShortDescriptionAttribute($productItem->order_color) . '</strong></div>';
+//            }
+//
+//            if (!(strpos($productItem->product_image, 'http') !== false)) {
+//                $productItem->product_image = env('APP_URL') . $productItem->product_image;
+//            }
+//
+//            $productsHtml = '<div style="margin-top: 5px;display: flex;gap: 10px;"><div style="flex: 1;"><img style="height: 40px;" src="' . $productItem->product_image . '"></div><div style="flex: 5;"><div>' . $productItem->name . '</div>' . $productAttributeHtml . '</div></div>';
+//
+//            $table .= "<tr><td>" . $productsHtml . "</td><td style='text-align: center;'>{$productItem->quantity}</td></tr>";
+//        }
+//
+//        $table .= "</tbody>";
+//        $table .= "</table>";
+//
+//        $html .= $table;
+//        $html .= "<div style='margin-top: 10px;'>Hãy truy cập <a href='" . route('administrator.orders.index') . "'>" . route('administrator.orders.index') . "</a> để kiểm tra đơn hàng!</div>";
+//
+//        Helper::sendEmailToShop('Đơn hàng mới!', $html);
 
         $item->refresh();
 
@@ -130,7 +179,7 @@ class OrderController extends Controller
         ]);
 
         if (count($request->quantities) != count($request->product_ids)) {
-            return Helper::errorAPI(99,[],"2 mảng phải bằng nhau");
+            return Helper::errorAPI(99, [], "2 mảng phải bằng nhau");
         }
 
         DB::beginTransaction();

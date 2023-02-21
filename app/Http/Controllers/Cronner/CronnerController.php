@@ -21,12 +21,12 @@ class CronnerController extends Controller
     {
         $jobEmails = \App\Models\JobEmail::whereDate('time_send' , '<=', now())->limit(env('MAXIMUM_SEND_EMAIL_ONE_MINUTE', 10))->get();
 
-//        foreach ($jobEmails as $jobEmail) {
-//            if (!empty($jobEmail->user)){
-//                $jobEmail->user->notify(new Notifications($jobEmail->title, $jobEmail->content));
-//            }
-//            $jobEmail->delete();
-//        }
+        foreach ($jobEmails as $jobEmail) {
+            if (!empty($jobEmail->user)){
+                $jobEmail->user->notify(new Notifications($jobEmail->title, $jobEmail->content));
+            }
+            $jobEmail->delete();
+        }
 
         ///////----///////
 
@@ -96,7 +96,7 @@ class CronnerController extends Controller
         }
 
         return response()->json([
-//            'emails' => $jobEmails,
+            'emails' => $jobEmails,
             'users' => $resultCron,
             'all' => $sendAll,
             'nowTime' => Formatter::getDateTime($nowTime),

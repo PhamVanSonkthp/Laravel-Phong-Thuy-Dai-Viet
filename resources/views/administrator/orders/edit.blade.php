@@ -16,9 +16,8 @@
                 @method('PUT')
                 @csrf
                 <div class="col-md-12">
-                    @include('administrator.components.require_input_text' , ['name' => 'name' , 'label' => 'Tên'])
 
-                    @include('administrator.components.require_input_text' , ['name' => 'search' , 'label' => 'Sản phẩm'])
+                    @include('administrator.components.select_category' , ['lable' => 'Trạng thái','name' => 'order_status_id' ,'html_category' => \App\Models\OrderStatus::getCategory(isset($item) ? optional($item)->order_status_id : ''), 'can_create' => false])
 
                     <div class="card">
                         <div class="table-responsive product-table">

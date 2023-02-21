@@ -98,9 +98,7 @@ class Order extends Model implements Auditable
     public function updateByQuery($request, $id)
     {
         $dataUpdate = [
-            'title' => $request->title,
-            'content' => $request->contents,
-            'slug' => Helper::addSlug($this,'slug', $request->title),
+            'order_status_id' => $request->order_status_id,
         ];
         $item = Helper::updateByQuery($this, $request, $id, $dataUpdate);
         return $this->findById($item->id);

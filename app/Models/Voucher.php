@@ -57,12 +57,12 @@ class Voucher extends Model implements Auditable
 
     public function isExpired(): bool
     {
-        return now() > $this->end;
+        return strtotime(now()) > strtotime($this->end);
     }
 
     public function isUnavailable(): bool
     {
-        return now() < $this->begin;
+        return strtotime(now()) < strtotime($this->begin);
     }
 
     public function isAcceptAmount($amount): bool

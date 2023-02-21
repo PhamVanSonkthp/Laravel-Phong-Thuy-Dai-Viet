@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Components\Recusive;
 use App\Traits\DeleteModelTrait;
 use App\Traits\StorageImageTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,6 +21,14 @@ class OrderStatus extends Model implements Auditable
 
     // begin
 
+
+    public static function getCategory($parent_id = null){
+        $data = OrderStatus::all();
+        $recusive = new Recusive($data);
+        $htmlOption = $recusive->categoryRecusive($parent_id);
+
+        return $htmlOption;
+    }
 
 
     // end

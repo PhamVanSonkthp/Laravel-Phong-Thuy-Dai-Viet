@@ -385,6 +385,7 @@ class Helper extends Model
     }
 
     public static function errorAPI($code, $data, $message){
+        DB::rollBack();
         return [
             'success' => false,
             'code' => $code,
