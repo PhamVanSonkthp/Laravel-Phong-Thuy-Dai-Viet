@@ -47,7 +47,6 @@ class OrderController extends Controller
         $request->validate([
             'cart_ids' => 'required|array|min:1',
             "cart_ids.*" => "required|numeric|min:1",
-            "voucher_id" => "numeric|min:1",
         ]);
 
         DB::beginTransaction();
@@ -118,7 +117,8 @@ class OrderController extends Controller
         }
 
         $item->update([
-            'amount' => $amount
+            'amount' => $amount,
+            'voucher_id' => $request->voucher_id ?? 0,
         ]);
         foreach ($request->cart_ids as $cart_id) {
             $cartItem = UserCart::find($cart_id);
@@ -126,40 +126,40 @@ class OrderController extends Controller
         }
         DB::commit();
 
-//        $html = "<p>Thông tin khách hàng</p>";
-//        $html .= "<div>Họ và tên: " . auth()->user()->name . "</div>";
-//        $html .= "<div>Số điện thoại: " . auth()->user()->phone . "</div>";
-//        $html .= "<div>Địa chỉ: " . auth()->user()->address . "</div>";
-//
-//        $html .= "<p>Danh sách đơn hàng</p>";
-//
-//        $table = "<table style='width: 100%;border: solid;'>";
-//        $table .= "<thead><tr><th style='border: 1px solid;'>Sản phẩm</th><th style='border: 1px solid;'>Số lượng</th></tr></thead>";
-//        $table .= "<tbody>";
-//        foreach ($item->products as $productItem) {
-//
-//            $productAttributeHtml = "";
-//
-//            if (!empty($productItem->order_size) || !empty($productItem->order_color)) {
-//                $productAttributeHtml = '<div>Phân loại:<strong>' . Formatter::getShortDescriptionAttribute($productItem->order_size) . '</strong>,<strong>' . Formatter::getShortDescriptionAttribute($productItem->order_color) . '</strong></div>';
-//            }
-//
-//            if (!(strpos($productItem->product_image, 'http') !== false)) {
-//                $productItem->product_image = env('APP_URL') . $productItem->product_image;
-//            }
-//
-//            $productsHtml = '<div style="margin-top: 5px;display: flex;gap: 10px;"><div style="flex: 1;"><img style="height: 40px;" src="' . $productItem->product_image . '"></div><div style="flex: 5;"><div>' . $productItem->name . '</div>' . $productAttributeHtml . '</div></div>';
-//
-//            $table .= "<tr><td>" . $productsHtml . "</td><td style='text-align: center;'>{$productItem->quantity}</td></tr>";
-//        }
-//
-//        $table .= "</tbody>";
-//        $table .= "</table>";
-//
-//        $html .= $table;
-//        $html .= "<div style='margin-top: 10px;'>Hãy truy cập <a href='" . route('administrator.orders.index') . "'>" . route('administrator.orders.index') . "</a> để kiểm tra đơn hàng!</div>";
-//
-//        Helper::sendEmailToShop('Đơn hàng mới!', $html);
+        $html = "<p>Thông tin khách hàng</p>";
+        $html .= "<div>Họ và tên: " . auth()->user()->name . "</div>";
+        $html .= "<div>Số điện thoại: " . auth()->user()->phone . "</div>";
+        $html .= "<div>Địa chỉ: " . auth()->user()->address . "</div>";
+
+        $html .= "<p>Danh sách đơn hàng</p>";
+
+        $table = "<table style='width: 100%;border: solid;'>";
+        $table .= "<thead><tr><th style='border: 1px solid;'>Sản phẩm</th><th style='border: 1px solid;'>Số lượng</th></tr></thead>";
+        $table .= "<tbody>";
+        foreach ($item->products as $productItem) {
+
+            $productAttributeHtml = "";
+
+            if (!empty($productItem->order_size) || !empty($productItem->order_color)) {
+                $productAttributeHtml = '<div>Phân loại:<strong>' . Formatter::getShortDescriptionAttribute($productItem->order_size) . '</strong>,<strong>' . Formatter::getShortDescriptionAttribute($productItem->order_color) . '</strong></div>';
+            }
+
+            if (!(strpos($productItem->product_image, 'http') !== false)) {
+                $productItem->product_image = env('APP_URL') . $productItem->product_image;
+            }
+
+            $productsHtml = '<div style="margin-top: 5px;display: flex;gap: 10px;"><div style="flex: 1;"><img style="height: 40px;" src="' . $productItem->product_image . '"></div><div style="flex: 5;"><div>' . $productItem->name . '</div>' . $productAttributeHtml . '</div></div>';
+
+            $table .= "<tr><td>" . $productsHtml . "</td><td style='text-align: center;'>{$productItem->quantity}</td></tr>";
+        }
+
+        $table .= "</tbody>";
+        $table .= "</table>";
+
+        $html .= $table;
+        $html .= "<div style='margin-top: 10px;'>Hãy truy cập <a href='" . route('administrator.orders.index') . "'>" . route('administrator.orders.index') . "</a> để kiểm tra đơn hàng!</div>";
+
+        Helper::sendEmailToShop('Đơn hàng mới!', $html);
 
         $item->refresh();
 

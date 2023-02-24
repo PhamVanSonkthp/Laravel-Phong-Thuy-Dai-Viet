@@ -128,11 +128,6 @@ class ProductController extends Controller
                         return response()->json($productAdded);
                     }
 
-                    $images[] = [
-                        'path' => Formatter::trimer($cells[23]->getValue()),
-                        'name' => Formatter::trimer($cells[24]->getValue()),
-                    ];
-
                     if ($cells[18]->getValue() == "") continue;
 
                     $item = [];
@@ -207,6 +202,11 @@ class ProductController extends Controller
                         $products = [];
                         $images = [];
                         $group_product_id++;
+                    }else{
+                        $images[] = [
+                            'path' => Formatter::trimer($cells[23]->getValue()),
+                            'name' => Formatter::trimer($cells[24]->getValue()),
+                        ];
                     }
 
                     $item['group_product_id'] = $group_product_id;
@@ -233,6 +233,19 @@ class ProductController extends Controller
                 }
             }
         }
+
+        foreach ($products as $productItem){
+            foreach ($images as $itemImage){
+                Image::create([
+                    'uuid' => Helper::randomString(),
+                    'table' => 'products',
+                    'image_path' => $itemImage['path'],
+                    'image_name' => $itemImage['name'],
+                    'relate_id' => $productItem->id,
+                ]);
+            }
+        }
+        $productAdded++;
 
         return response()->json($productAdded);
     }
