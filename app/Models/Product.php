@@ -25,7 +25,7 @@ class Product extends Model implements Auditable
     // begin
 
     public function star(){
-        return 4.5;
+        return rand(4,5);
     }
 
     public function toArray()
@@ -36,7 +36,7 @@ class Product extends Model implements Auditable
         $array['path_images'] = $this->images;
         if (count($array['path_images']) == 0){
             $array['path_images'][] = [
-                'id' => "0",
+                'id' => 0,
                 'uuid' => "none",
                 'image_path' => $this->feature_image_path,
                 'image_name' => "feature_image_path",
@@ -51,6 +51,8 @@ class Product extends Model implements Auditable
         $array['star'] = $this->star();
         $array['category'] = $this->category;
         $array['price'] = $this->priceSale();
+        $array['price_up_sale'] = $this->priceUpSale();
+        $array['is_flash_sale'] = rand(0,1) == 1;
         $array['price_by_user'] = $this->priceByUser();
 
         if ((auth('sanctum')->check() || auth()->check()) && (optional(auth('sanctum')->user())->is_admin != 0 || optional(auth()->user())->is_admin != 0)){
@@ -106,16 +108,18 @@ class Product extends Model implements Auditable
         $priceMaxAgent = PHP_INT_MIN;
         $priceMaxClient = PHP_INT_MIN;
 
-        $resultAgent = "Liên hệ";
-        $resultClient = "Liên hệ";
+        $resultAgent = 0;
+        $resultClient = 0;
 
         foreach ($productsAttributes as $item){
-            if (!$item->isEmptyInventory()){
-                if ($item->price_client <= $priceMinClient) $priceMinClient = $item->price_client;
-                if ($item->price_client >= $priceMaxClient) $priceMaxClient = $item->price_client;
-                if ($item->price_agent <= $priceMinAgent) $priceMinAgent = $item->price_agent;
-                if ($item->price_agent >= $priceMaxAgent) $priceMaxAgent = $item->price_agent;
-            }
+            if ($item->price_client <= $priceMinClient) $priceMinClient = $item->price_client;
+            if ($item->price_client >= $priceMaxClient) $priceMaxClient = $item->price_client;
+            if ($item->price_agent <= $priceMinAgent) $priceMinAgent = $item->price_agent;
+            if ($item->price_agent >= $priceMaxAgent) $priceMaxAgent = $item->price_agent;
+
+//            if (!$item->isEmptyInventory()){
+//
+//            }
         }
 
         if (!empty($priceMinAgent)){
@@ -131,6 +135,52 @@ class Product extends Model implements Auditable
                 $resultClient = $priceMinClient . " ~ " . $priceMaxClient;
             }else{
                 $resultClient = $priceMinClient;
+            }
+        }
+
+        if (auth('sanctum')->check() && auth('sanctum')->user()->user_type_id == 2){
+            return $resultAgent . "";
+        } else {
+            return $resultClient . "";
+        }
+    }
+
+    public function priceUpSale(){
+
+        $percent = 0.25;
+
+        $productsAttributes = $this->productsAttributes;
+
+        $priceMinAgent = PHP_INT_MAX;
+        $priceMinClient = PHP_INT_MAX;
+        $priceMaxAgent = PHP_INT_MIN;
+        $priceMaxClient = PHP_INT_MIN;
+
+        $resultAgent = 0;
+        $resultClient = 0;
+
+        foreach ($productsAttributes as $item){
+            if ($item->price_client <= $priceMinClient) $priceMinClient = $item->price_client;
+            if ($item->price_client >= $priceMaxClient) $priceMaxClient = $item->price_client;
+            if ($item->price_agent <= $priceMinAgent) $priceMinAgent = $item->price_agent;
+            if ($item->price_agent >= $priceMaxAgent) $priceMaxAgent = $item->price_agent;
+        }
+        if ($priceMinClient == PHP_INT_MIN) $priceMinClient = 0;
+        if ($priceMaxClient == PHP_INT_MAX) $priceMaxClient = 0;
+
+        if (!empty($priceMinAgent)){
+            if ($priceMinAgent != $priceMaxAgent){
+                $resultAgent = round($priceMinAgent + $priceMinAgent * $percent) . " ~ " . round($priceMaxAgent + $priceMaxAgent * $percent);
+            }else{
+                $resultAgent = round($priceMinAgent + $priceMinAgent * $percent);
+            }
+        }
+
+        if (!empty($priceMinClient)){
+            if ($priceMinClient != $priceMaxClient){
+                $resultClient = round($priceMinClient + $priceMinClient * $percent) . " ~ " . round($priceMaxClient + $priceMaxClient * $percent);
+            }else{
+                $resultClient = round($priceMinClient + $priceMinClient * $percent);
             }
         }
 

@@ -112,6 +112,16 @@ Route::prefix('ajax/administrator')->group(function () {
         });
     });
 
+    Route::prefix('/products')->group(function () {
+        Route::group(['middleware' => ['auth']], function () {
+            Route::put('/update', [
+                'as' => 'ajax.administrator.products.update',
+                'uses' => 'App\Http\Controllers\Ajax\ProductController@update',
+                'middleware' => 'can:orders-edit',
+            ]);
+        });
+    });
+
 
     Route::prefix('/')->group(function () {
         Route::group(['middleware' => ['auth']], function () {

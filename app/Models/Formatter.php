@@ -181,7 +181,7 @@ class Formatter extends Model
 
     public static function trimer($input)
     {
-        return $input;
+        return trim($input . "");
     }
 
     public static function convertDateVNToEng($input)

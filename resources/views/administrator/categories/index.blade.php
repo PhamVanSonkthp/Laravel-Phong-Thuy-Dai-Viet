@@ -31,6 +31,7 @@
                                     <th><input id="check_box_delete_all" type="checkbox" class="checkbox-parent" onclick="onSelectCheckboxDeleteItem()"></th>
                                     <th>#</th>
                                     <th>Tiêu đề</th>
+                                    <th>Mô tả</th>
                                     <th>Hình ảnh</th>
                                     <th>Thời gian tạo</th>
                                     <th>Hành động</th>
@@ -44,6 +45,7 @@
                                         </td>
                                         <td>{{$item->id}}</td>
                                         <td>{{$item->name}}</td>
+                                        <td>{{$item->description}}</td>
                                         <td>
                                             <img class="rounded-circle" src="{{$item->avatar()}}" alt="">
                                         </td>

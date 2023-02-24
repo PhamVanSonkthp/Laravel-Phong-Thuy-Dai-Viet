@@ -44,10 +44,15 @@ Route::prefix('/')->group(function () {
 //        'uses' => 'App\Http\Controllers\User\UserController@index',
 //    ]);
 
-//    Route::get('/ttt', function () {
-//        $product = \App\Models\Product::find(124);
-//        $product->fill(['size' => "67CM", 'color' => 'Vàng'])->save();
-//    });
+    Route::get('/ttt', function () {
+        $products = Product::all();
+
+        foreach ($products as $product){
+            $product->update([
+                'name' => trim($product->name)
+            ]);
+        }
+    });
 
 
 //    Route::get('/quot', function () {
@@ -181,7 +186,7 @@ Route::prefix('/')->group(function () {
 //                    $shortDescription = Formatter::getShortDescriptionAttribute($description, 30);
 //
 //                    $item['short_description'] = $shortDescription;
-//                    $item['product_visibility_id'] = Formatter::trimer($cells[6]->getValue()) == 'TRUE' ? 2 : 1;
+//                    $item['product_visibility_id'] = ( Formatter::trimer(strtoupper(($cells[6]->getValue())) == 'TRUE') || Formatter::trimer(strtoupper(($cells[6]->getValue())) == '1') ) ? 2 : 1;
 //                    $item['sku'] = Formatter::trimer($cells[13]->getValue());
 //                    $item['inventory'] = Formatter::formatNumberToDatabase(Formatter::trimer($cells[15]->getValue()));
 //                    $item['product_buy_empty_id'] = Formatter::trimer($cells[16]->getValue()) == 'continue' ? 2 : 1;

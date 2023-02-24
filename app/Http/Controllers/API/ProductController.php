@@ -59,6 +59,12 @@ class ProductController extends Controller
             $results = $results->where('inventory' ,'>', 0);
         }
 
+        if (isset($request->is_best) && $request->is_best == 1){
+            $results = $results->orderBy('sold' ,'DESC');
+        }else{
+            $results = $results->latest();
+        }
+
         $results = $results->latest()->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
 
         return response()->json($results);

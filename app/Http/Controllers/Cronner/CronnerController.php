@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Cronner;
 
 use App\Http\Controllers\Controller;
+use App\Models\Calendar;
 use App\Models\Formatter;
 use App\Models\Helper;
+use App\Models\SunCalendar;
 use App\Models\User;
 use App\Notifications\Notifications;
 use Carbon\Carbon;
@@ -39,11 +41,22 @@ class CronnerController extends Controller
             $currentHour -= 24;
             $dayOfWeek++;
         }
+
         $nowTime = $currentHour . ':' . date('i') . ":00";
 
         $nowTime = Carbon::parse($nowTime);
         $nowTime = $nowTime->addHours(5);
         $nowTime = $nowTime->addMinutes(30);
+
+        if (strtotime($nowTime) == strtotime(date('Y-m-d H:m'))){
+            $item = SunCalendar::whereDate('date', Carbon::today())->first();
+            if (!empty($item)) {
+                $item = Calendar::find($item->calendar_id);
+                if (!empty($item)){
+                    Helper::sendNotificationToTopic("Thời tiết: ". env('FIREBASE_TOPIC_ALL_N1','app'), $item->weather, trim(optional($item->quotation)->description));
+                }
+            }
+        }
 
         $resultsCron = \App\Models\JobNotification::where('time', $nowTime)->where('notiable', 1)->get();
 

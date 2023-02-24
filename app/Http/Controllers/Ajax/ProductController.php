@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Ajax;
 
 use App\Exports\ModelExport;
 use App\Http\Controllers\Controller;
@@ -68,10 +68,34 @@ class ProductController extends Controller
         return view('administrator.' . $this->prefixView . '.edit', compact('item'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        $this->model->updateByQuery($request, $id);
-        return back();
+        $item = $this->model->find($request->id);
+
+        if (!empty($item)){
+            $dataUpdate = [];
+
+            if (isset($request->inventory) && $request->inventory != ""){
+                $dataUpdate['inventory'] = Formatter::formatNumberToDatabase($request->inventory);
+            }
+            if (isset($request->price_client) && $request->price_client != ""){
+                $dataUpdate['price_client'] = Formatter::formatNumberToDatabase($request->price_client);
+            }
+            if (isset($request->price_agent) && $request->price_agent != ""){
+                $dataUpdate['price_agent'] = Formatter::formatNumberToDatabase($request->price_agent);
+            }
+            if (isset($request->price_partner) && $request->price_partner != ""){
+                $dataUpdate['price_partner'] = Formatter::formatNumberToDatabase($request->price_partner);
+            }
+
+            $item->update($dataUpdate);
+        }
+
+        return response()->json([
+            'a'=> $item,
+            'b'=> $request->inventory,
+            'c'=> $request->id,
+        ]);
     }
 
     public function delete(Request $request, $id)
@@ -116,8 +140,6 @@ class ProductController extends Controller
             $group_product_id = $tmpProduct->group_product_id;
             $group_product_id++;
         }
-
-
 
         foreach ($reader->getSheetIterator() as $sheet) {
             foreach ($sheet->getRowIterator() as $index => $row) {
@@ -174,7 +196,7 @@ class ProductController extends Controller
                     $shortDescription = Formatter::getShortDescriptionAttribute($description, 30);
 
                     $item['short_description'] = $shortDescription;
-                    $item['product_visibility_id'] = ( Formatter::trimer(strtoupper(($cells[6]->getValue())) == 'TRUE') || Formatter::trimer(strtoupper(($cells[6]->getValue())) == '1') ) ? 2 : 1;
+                    $item['product_visibility_id'] = Formatter::trimer($cells[6]->getValue()) == 'TRUE' ? 2 : 1;
                     $item['sku'] = Formatter::trimer($cells[13]->getValue());
                     $item['inventory'] = Formatter::formatNumberToDatabase(Formatter::trimer($cells[15]->getValue()));
                     $item['product_buy_empty_id'] = Formatter::trimer($cells[16]->getValue()) == 'continue' ? 2 : 1;

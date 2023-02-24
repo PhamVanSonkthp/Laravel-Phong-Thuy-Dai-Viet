@@ -70,13 +70,20 @@ class Helper extends Model
 
     public static function images($object)
     {
-        $item = $object->hasOne(SingleImage::class, 'relate_id', 'id')->where('table', $object->getTable());
+        $item = $object->hasMany(SingleImage::class, 'relate_id', 'id')->where('table', $object->getTable());
         $isSingle = SingleImage::where('relate_id', $object->id)->where('table', $object->getTable())->first();
-        if (!empty($isSingle)) {
-            return $item;
+
+        $images = $object->hasMany(Image::class, 'relate_id', 'id')->where('table', $object->getTable())->orderBy('index');
+
+        if (!empty($images) && $images->count()) {
+            return $images;
         }
 
-        return $object->hasMany(Image::class, 'relate_id', 'id')->where('table', $object->getTable())->orderBy('index');
+//        if (!empty($isSingle)) {
+//            return $item;
+//        }
+
+        return $item;
     }
 
     public static function getAllColumsOfTable($object)
@@ -92,37 +99,40 @@ class Helper extends Model
         $searchLikeColumns = ['name', 'title', 'search_query'];
         $searchColumnBanned = ['limit', 'page', 'with_trashed'];
 
-        foreach ($request->all() as $key => $item) {
-            $item = trim($item);
+        if (!empty($request)){
+            foreach ($request->all() as $key => $item) {
+                $item = trim($item);
 
-            if (in_array($key, $searchColumnBanned)) continue;
+                if (in_array($key, $searchColumnBanned)) continue;
 
-            if (in_array($key, $searchLikeColumns)) {
-                if (!empty($item) || strlen($item) > 0) {
+                if (in_array($key, $searchLikeColumns)) {
+                    if (!empty($item) || strlen($item) > 0) {
 
-                    $query = $query->where(function ($query) use ($item, $columns, $searchLikeColumns) {
-                        foreach ($searchLikeColumns as $searchColumn) {
-                            if (in_array($searchColumn, $columns)) {
-                                $query->orWhere($searchColumn, 'LIKE', "%{$item}%");
+                        $query = $query->where(function ($query) use ($item, $columns, $searchLikeColumns) {
+                            foreach ($searchLikeColumns as $searchColumn) {
+                                if (in_array($searchColumn, $columns)) {
+                                    $query->orWhere($searchColumn, 'LIKE', "%{$item}%");
+                                }
                             }
-                        }
-                    });
-                }
-            } else if ($key == "start" || $key == "from") {
-                if (!empty($item) || strlen($item) > 0) {
-                    $query = $query->whereDate('created_at', '>=', $item);
-                }
-            } else if ($key == "end" || $key == "to") {
-                if (!empty($item) || strlen($item) > 0) {
-                    $query = $query->whereDate('created_at', '<=', $item);
-                }
-            } else {
-                if (!in_array($key, $columns)) continue;
-                if (!empty($item) || strlen($item) > 0) {
-                    $query = $query->where($key, $item);
+                        });
+                    }
+                } else if ($key == "start" || $key == "from") {
+                    if (!empty($item) || strlen($item) > 0) {
+                        $query = $query->whereDate('created_at', '>=', $item);
+                    }
+                } else if ($key == "end" || $key == "to") {
+                    if (!empty($item) || strlen($item) > 0) {
+                        $query = $query->whereDate('created_at', '<=', $item);
+                    }
+                } else {
+                    if (!in_array($key, $columns)) continue;
+                    if (!empty($item) || strlen($item) > 0) {
+                        $query = $query->where($key, $item);
+                    }
                 }
             }
         }
+
 
         if (is_array($queries)) {
             foreach ($queries as $key => $item) {
@@ -171,7 +181,7 @@ class Helper extends Model
             return $query;
         }
 
-        $items = $query->latest()->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
+        $items = $query->latest()->paginate(Formatter::getLimitRequest(optional($request)->limit))->appends(request()->query());
 
         if (!empty($makeHiddens) && is_array($makeHiddens)) {
             foreach ($items as $item) {

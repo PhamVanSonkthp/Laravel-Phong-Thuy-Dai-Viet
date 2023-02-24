@@ -18,6 +18,7 @@ class CreateSystemBranchesTable extends Migration
             $table->text('name');
             $table->text('description');
             $table->text('phone');
+            $table->bigInteger('area_id')->default(0);
             $table->timestamps();
         });
     }

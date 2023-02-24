@@ -28,6 +28,8 @@ class CreateProductsTable extends Migration
             $table->tinyInteger('product_visibility_id')->default(1);
             $table->bigInteger('group_product_id');
             $table->text('sku')->nullable();
+            $table->bigInteger('sold')->default(0);
+            $table->integer('is_flash_sale')->default(0);
             $table->bigInteger('provider_id')->default(0);
             $table->tinyInteger('product_buy_empty_id')->default(1);
             $table->tinyInteger('request_devilvery_id')->default(1);

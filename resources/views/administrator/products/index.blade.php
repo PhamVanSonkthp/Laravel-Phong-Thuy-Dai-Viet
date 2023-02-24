@@ -71,48 +71,46 @@
                                         <td>
                                             @if($item->isProductVariation())
                                                 @foreach($item->attributes() as $key => $itemAttribute)
-                                                    <div class="row mt-2">
+                                                    <div class="row mt-2" data-id="{{$itemAttribute['id']}}">
                                                         <div class="col-4">
                                                             <div>
                                                                 {{$itemAttribute['size']}}, {{$itemAttribute['color']}}
                                                             </div>
                                                         </div>
                                                         <div class="col-2">
-                                                            {{\App\Models\Formatter::formatNumber($itemAttribute['inventory'])}}
+                                                            <input oninput="onChangeInventory('{{$itemAttribute['id']}}','inventory' ,this.value)" type="text" autocomplete="off" class="form-control number" value="{{\App\Models\Formatter::formatNumber($itemAttribute['inventory'])}}">
                                                         </div>
                                                         <div class="col-2">
-                                                            {{ \App\Models\Formatter::formatMoney( optional(\App\Models\Product::find($itemAttribute['id']))->price_client) }}
+                                                            <input oninput="onChangeInventory('{{$itemAttribute['id']}}','price_client', this.value)" type="text" autocomplete="off" class="form-control number" value="{{\App\Models\Formatter::formatMoney(optional(\App\Models\Product::find($itemAttribute['id']))->price_client)}}">
                                                         </div>
                                                         <div class="col-2">
-                                                            {{ \App\Models\Formatter::formatMoney( optional(\App\Models\Product::find($itemAttribute['id']))->price_agent) }}
+                                                            <input oninput="onChangeInventory('{{$itemAttribute['id']}}','price_agent', this.value)" type="text" autocomplete="off" class="form-control number" value="{{\App\Models\Formatter::formatMoney(optional(\App\Models\Product::find($itemAttribute['id']))->price_agent)}}">
                                                         </div>
                                                         <div class="col-2">
-                                                            {{ \App\Models\Formatter::formatMoney( optional(\App\Models\Product::find($itemAttribute['id']))->price_partner) }}
+                                                            <input oninput="onChangeInventory('{{$itemAttribute['id']}}','price_partner', this.value)" type="text" autocomplete="off" class="form-control number" value="{{\App\Models\Formatter::formatMoney(optional(\App\Models\Product::find($itemAttribute['id']))->price_partner)}}">
                                                         </div>
                                                     </div>
                                                 @endforeach
                                             @else
-                                                <div class="row mt-2">
+                                                <div class="row mt-2" data-id="{{$item->id}}">
                                                     <div class="col-4">
                                                         <div>
 
                                                         </div>
                                                     </div>
                                                     <div class="col-2">
-                                                        {{\App\Models\Formatter::formatNumber($item->inventory)}}
+                                                        <input oninput="onChangeInventory('{{$item->id}}','inventory', this.value)" type="text" autocomplete="off" class="form-control number" value="{{\App\Models\Formatter::formatNumber($item->inventory)}}">
                                                     </div>
                                                     <div class="col-2">
-                                                        {{ \App\Models\Formatter::formatMoney( $item->price_client) }}
+                                                        <input oninput="onChangeInventory('{{$item->id}}','price_client', this.value)" type="text" autocomplete="off" class="form-control number" value="{{\App\Models\Formatter::formatMoney($item->price_client)}}">
                                                     </div>
                                                     <div class="col-2">
-                                                        {{ \App\Models\Formatter::formatMoney( $item->price_agent) }}
+                                                        <input oninput="onChangeInventory('{{$item->id}}','price_agent', this.value)" type="text" autocomplete="off" class="form-control number" value="{{\App\Models\Formatter::formatMoney($item->price_agent)}}">
                                                     </div>
                                                     <div class="col-2">
-                                                        {{ \App\Models\Formatter::formatMoney( $item->price_partner) }}
+                                                        <input oninput="onChangeInventory('{{$item->id}}','price_partner', this.value)" type="text" autocomplete="off" class="form-control number" value="{{\App\Models\Formatter::formatMoney($item->price_partner)}}">
                                                     </div>
                                                 </div>
-
-
                                             @endif
                                         </td>
                                         <td>
@@ -147,6 +145,28 @@
 @endsection
 
 @section('js')
+    <script>
+        function onChangeInventory(id, key, value){
 
+            console.log(key)
+            console.log(value)
+
+            callAjax(
+                "PUT",
+                "{{route('ajax.administrator.products.update')}}",
+                {
+                    id: id,
+                    [key]: value,
+                },
+                (response) => {
+                    console.log(response)
+                },
+                (error) => {
+
+                },
+                false,
+            )
+        }
+    </script>
 @endsection
 

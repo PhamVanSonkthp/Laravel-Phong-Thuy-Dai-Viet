@@ -20,6 +20,10 @@ class SingleImage extends Model implements Auditable
 
     protected $guarded = [];
 
+    protected $casts = [
+        'id' => 'integer'
+    ];
+
     // begin
 
     public function isPublic(){

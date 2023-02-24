@@ -108,6 +108,8 @@
             "{{route('administrator.'.$prefixView.'.import')}}",
             formData,
             (response) => {
+                console.log(response)
+
                 alert('đã thêm ' + response + " sản phẩm")
             },
             (error) => {

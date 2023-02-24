@@ -28,6 +28,11 @@ class SystemBranchController extends Controller
 
     public function list(Request $request)
     {
+        if ($request->area_id == 0){
+            $results = RestfulAPI::response($this->model, null);
+            return response()->json($results);
+        }
+
         $results = RestfulAPI::response($this->model, $request);
         return response()->json($results);
     }

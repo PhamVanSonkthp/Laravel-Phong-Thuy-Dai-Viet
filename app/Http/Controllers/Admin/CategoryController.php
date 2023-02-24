@@ -19,7 +19,7 @@ class CategoryController extends Controller
     {
         $this->initBaseModel($model);
         $this->isSingleImage = true;
-        $this->isMultipleImages = false;
+        $this->isMultipleImages = true;
         $this->shareBaseModel($model);
     }
 
