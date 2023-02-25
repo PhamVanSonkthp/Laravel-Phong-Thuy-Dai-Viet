@@ -111,7 +111,14 @@ class Helper extends Model
                         $query = $query->where(function ($query) use ($item, $columns, $searchLikeColumns) {
                             foreach ($searchLikeColumns as $searchColumn) {
                                 if (in_array($searchColumn, $columns)) {
-                                    $query->orWhere($searchColumn, 'LIKE', "%{$item}%");
+
+                                    $searchValues = preg_split('/\s+/', $item, -1, PREG_SPLIT_NO_EMPTY);
+
+                                    foreach ($searchValues as $value) {
+                                        $query->orWhere('name', 'like', "%{$value}%");
+                                    }
+
+//                                    $query->orWhere($searchColumn, 'RLIKE', "[[:<:]]{$item}[[:>:]]");
                                 }
                             }
                         });
