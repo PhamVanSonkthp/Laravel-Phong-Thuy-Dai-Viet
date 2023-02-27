@@ -109,8 +109,11 @@
             formData,
             (response) => {
                 console.log(response)
-
-                alert('đã thêm ' + response + " sản phẩm")
+                if (confirm('Đã thêm ' + response + " sản phẩm") == true) {
+                    window.location.reload()
+                } else {
+                    window.location.reload()
+                }
             },
             (error) => {
                 console.log(error)

@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use Rinvex\Attributes\Traits\Attributable;
-use function PHPUnit\Framework\isNull;
 
 class Product extends Model implements Auditable
 {
@@ -17,6 +16,10 @@ class Product extends Model implements Auditable
     use DeleteModelTrait;
     use StorageImageTrait;
     use Attributable;
+
+    protected $searchable = [
+        'name'
+    ];
 
     protected $guarded = [];
 

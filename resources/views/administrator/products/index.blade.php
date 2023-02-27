@@ -60,7 +60,7 @@
                                         <td class="text-center">
                                             <input type="checkbox" class="checkbox-delete-item" value="{{$item->id}}">
                                         </td>
-                                        <td>{{$item->id}}</td>
+                                        <td>{{$index + 1}}</td>
                                         <td>{{\App\Models\Formatter::getShortDescriptionAttribute($item->name, 10)}}</td>
                                         <td>
                                             <img class="rounded-circle" src="{{$item->avatar()}}" alt="">

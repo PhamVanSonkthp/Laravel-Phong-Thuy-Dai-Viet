@@ -107,18 +107,10 @@ class Helper extends Model
 
                 if (in_array($key, $searchLikeColumns)) {
                     if (!empty($item) || strlen($item) > 0) {
-
                         $query = $query->where(function ($query) use ($item, $columns, $searchLikeColumns) {
                             foreach ($searchLikeColumns as $searchColumn) {
                                 if (in_array($searchColumn, $columns)) {
-
-                                    $searchValues = preg_split('/\s+/', $item, -1, PREG_SPLIT_NO_EMPTY);
-
-                                    foreach ($searchValues as $value) {
-                                        $query->orWhere('name', 'like', "%{$value}%");
-                                    }
-
-//                                    $query->orWhere($searchColumn, 'RLIKE', "[[:<:]]{$item}[[:>:]]");
+                                    $query->orWhere($searchColumn, 'LIKE', "%{$item}%");
                                 }
                             }
                         });
@@ -425,5 +417,29 @@ class Helper extends Model
         ]));
 
         $user->notify(new Notifications($subject, $body));
+    }
+
+
+    public static function fullTextWildcards($term)
+    {
+        // removing symbols used by MySQL
+        $reservedSymbols = ['-', '+', '<', '>', '@', '(', ')', '~'];
+        $term = str_replace($reservedSymbols, '', $term);
+
+        $words = explode(' ', $term);
+
+        foreach ($words as $key => $word) {
+            /*
+             * applying + operator (required word) only big words
+             * because smaller ones are not indexed by mysql
+             */
+            if (strlen($word) >= 2) {
+                $words[$key] = '+' . $word . '*';
+            }
+        }
+
+        $searchTerm = implode(' ', $words);
+
+        return $searchTerm;
     }
 }

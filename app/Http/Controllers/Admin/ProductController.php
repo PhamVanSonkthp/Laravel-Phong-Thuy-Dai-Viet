@@ -124,14 +124,47 @@ class ProductController extends Controller
                 if ($index > 1) {
                     $cells = $row->getCells();
 
+                    $item = [];
+
+                    $item['slug'] = Formatter::trimer($cells[0]->getValue());
+
+                    if ($item['slug'] != $slug) {
+                        $slug = Formatter::trimer($cells[0]->getValue());
+
+                        foreach ($products as $productItem){
+                            foreach ($images as $itemImage){
+                                Image::create([
+                                    'uuid' => Helper::randomString(),
+                                    'table' => 'products',
+                                    'image_path' => $itemImage['path'],
+                                    'image_name' => $itemImage['name'],
+                                    'relate_id' => $productItem->id,
+                                ]);
+                            }
+                        }
+                        $products = [];
+                        if ($index != 2){
+                            $images = [];
+                        }
+
+                        $group_product_id++;
+                    }else{
+                        if (!empty(Formatter::trimer($cells[23]->getValue()))){
+                            $images[] = [
+                                'path' => Formatter::trimer($cells[23]->getValue()),
+                                'name' => Formatter::trimer($cells[24]->getValue()),
+                            ];
+                        }
+                    }
+
                     if (count($cells) == 0 || $cells[0]->getValue() == ""){
                         return response()->json($productAdded);
                     }
 
                     if ($cells[18]->getValue() == "") continue;
 
-                    $item = [];
-                    $item['slug'] = Formatter::trimer($cells[0]->getValue());
+
+
 
                     $item['name'] = Formatter::trimer($cells[1]->getValue());
                     if (empty($item['name'])) {
@@ -185,29 +218,7 @@ class ProductController extends Controller
                     $item['weight'] = Formatter::trimer($cells[27]->getValue());
                     $item['type_weight'] = Formatter::trimer($cells[28]->getValue());
 
-                    if ($item['slug'] != $slug) {
-                        $slug = Formatter::trimer($cells[0]->getValue());
 
-                        foreach ($products as $productItem){
-                            foreach ($images as $itemImage){
-                                Image::create([
-                                    'uuid' => Helper::randomString(),
-                                    'table' => 'products',
-                                    'image_path' => $itemImage['path'],
-                                    'image_name' => $itemImage['name'],
-                                    'relate_id' => $productItem->id,
-                                ]);
-                            }
-                        }
-                        $products = [];
-                        $images = [];
-                        $group_product_id++;
-                    }else{
-                        $images[] = [
-                            'path' => Formatter::trimer($cells[23]->getValue()),
-                            'name' => Formatter::trimer($cells[24]->getValue()),
-                        ];
-                    }
 
                     $item['group_product_id'] = $group_product_id;
 

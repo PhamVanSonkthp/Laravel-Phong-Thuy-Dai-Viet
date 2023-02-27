@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateProductsTable extends Migration
@@ -15,7 +16,7 @@ class CreateProductsTable extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->text('name');
+            $table->string('name');
             $table->text('slug');
             $table->text('short_description')->nullable();
             $table->text('description')->nullable();
@@ -42,6 +43,8 @@ class CreateProductsTable extends Migration
             $table->string('feature_image_path')->nullable();
             $table->timestamps();
         });
+
+        DB::statement('ALTER TABLE `products` ADD FULLTEXT INDEX product_name_index (name)');
     }
 
     /**

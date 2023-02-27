@@ -8,6 +8,7 @@ use App\Models\CategoryNew;
 use App\Models\Chat;
 use App\Models\ChatGroup;
 use App\Models\Formatter;
+use App\Models\Helper;
 use App\Models\ParticipantChat;
 use App\Models\Product;
 use App\Models\RestfulAPI;
@@ -63,6 +64,40 @@ class ProductController extends Controller
             $results = $results->orderBy('sold' ,'DESC');
         }else{
             $results = $results->latest();
+        }
+
+        if ($results->count() == 0){
+            $results = Product::whereRaw("MATCH(name) AGAINST(? IN BOOLEAN MODE)", Helper::fullTextWildcards($request->search_query))->where('product_visibility_id', 2);
+
+            if (isset($request->min_price)){
+                $results = $results->where(function ($query) use ($request) {
+                    $query->where('price_client', '>=', $request->min_price)
+                        ->orWhere('price_agent', '>=', $request->min_price);
+                });
+            }
+
+            if (isset($request->max_price)){
+                $results = $results->where(function ($query) use ($request) {
+                    $query->where('price_client', '<=', $request->max_price)
+                        ->orWhere('price_agent', '<=', $request->max_price);
+                });
+            }
+
+            if (isset($request->empty_inventory) && $request->empty_inventory == 2){
+                $results = $results->where('inventory', '<=' , 0);
+            }
+
+            if (isset($request->empty_inventory) && $request->empty_inventory == 1){
+                $results = $results->where('inventory' ,'>', 0);
+            }
+
+            if (isset($request->is_best) && $request->is_best == 1){
+                $results = $results->orderBy('sold' ,'DESC');
+            }else{
+                $results = $results->latest();
+            }
+
+            return $results->latest()->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
         }
 
         $results = $results->latest()->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());

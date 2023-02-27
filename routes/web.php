@@ -45,13 +45,42 @@ Route::prefix('/')->group(function () {
 //    ]);
 
     Route::get('/ttt', function () {
-        $products = Product::all();
+//        $products = Product::all();
+//
+//        foreach ($products as $product){
+//            $product->update([
+//                'name' => trim($product->name)
+//            ]);
+//        }
 
-        foreach ($products as $product){
-            $product->update([
-                'name' => trim($product->name)
-            ]);
-        }
+        app('rinvex.attributes.attribute')->create([
+            'slug' => 'size',
+            'type' => 'varchar',
+            'name' => ['vi' => 'Kích thước', 'en' => 'size'],
+            'entities' => ['App\Models\Product'],
+        ]);
+
+        app('rinvex.attributes.attribute')->create([
+            'slug' => 'color',
+            'type' => 'varchar',
+            'name' => ['vi' => 'Màu sắc', 'en' => 'color'],
+            'entities' => ['App\Models\Product'],
+        ]);
+
+        app('rinvex.attributes.attribute')->create([
+            'slug' => 'size',
+            'type' => 'varchar',
+            'name' => ['vi' => 'Kích thước', 'en' => 'size'],
+            'entities' => ['App\Models\Product'],
+        ]);
+
+        app('rinvex.attributes.attribute')->create([
+            'slug' => 'color',
+            'type' => 'varchar',
+            'name' => ['vi' => 'Màu sắc', 'en' => 'color'],
+            'entities' => ['App\Models\Product'],
+        ]);
+///
     });
 
 
