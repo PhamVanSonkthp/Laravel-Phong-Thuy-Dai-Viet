@@ -62,6 +62,14 @@ class ProductController extends Controller
             $results = $results->where('inventory' ,'>', 0);
         }
 
+        if (isset($request->sort_by_price)){
+            if ($request->sort_by_price == "asc"){
+                $results = $results->orderBy('price_client' ,'asc');
+            }else if ($request->sort_by_price == "desc"){
+                $results = $results->orderBy('price_client' ,'DESC');
+            }
+        }
+
         if (isset($request->is_best) && $request->is_best == 1){
             $results = $results->orderBy('sold' ,'DESC');
         }else{
@@ -91,6 +99,14 @@ class ProductController extends Controller
 
             if (isset($request->empty_inventory) && $request->empty_inventory == 1){
                 $results = $results->where('inventory' ,'>', 0);
+            }
+
+            if (isset($request->sort_by_price)){
+                if ($request->sort_by_price == "asc"){
+                    $results = $results->orderBy('price_client' ,'asc');
+                }else if ($request->sort_by_price == "desc"){
+                    $results = $results->orderBy('price_client' ,'DESC');
+                }
             }
 
             if (isset($request->is_best) && $request->is_best == 1){
@@ -131,6 +147,14 @@ class ProductController extends Controller
 
                 foreach ($words as $word){
                     $results = $results->where('name', 'LIKE', "%{$word}%");
+                }
+            }
+
+            if (isset($request->sort_by_price)){
+                if ($request->sort_by_price == "asc"){
+                    $results = $results->orderBy('price_client' ,'asc');
+                }else if ($request->sort_by_price == "desc"){
+                    $results = $results->orderBy('price_client' ,'DESC');
                 }
             }
 
@@ -178,6 +202,14 @@ class ProductController extends Controller
                         $results = $results->orWhere('name', 'LIKE', "%{$word}%");
                     }
                 });
+            }
+
+            if (isset($request->sort_by_price)){
+                if ($request->sort_by_price == "asc"){
+                    $results = $results->orderBy('price_client' ,'asc');
+                }else if ($request->sort_by_price == "desc"){
+                    $results = $results->orderBy('price_client' ,'DESC');
+                }
             }
 
             if (isset($request->is_best) && $request->is_best == 1){

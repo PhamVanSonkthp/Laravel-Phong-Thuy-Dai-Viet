@@ -79,6 +79,8 @@ class OrderController extends Controller
             ]);
 
             $orderProduct->fill(['order_size' => $cartItem->product->size, 'order_color' => $cartItem->product->color])->save();
+
+            $cartItem->product->decrement('inventory',$cartItem->quantity);
         }
 
         if (isset($request->voucher_id) && !empty($request->voucher_id)) {
@@ -204,6 +206,8 @@ class OrderController extends Controller
             ]);
 
             $orderProduct->fill(['order_size' => $product->size, 'order_color' => $product->color])->save();
+
+            $product->decrement('inventory',$request->quantities[$index]);
         }
 
         DB::commit();

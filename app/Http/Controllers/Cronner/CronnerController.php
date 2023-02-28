@@ -48,7 +48,8 @@ class CronnerController extends Controller
         $nowTime = $nowTime->addHours(5);
         $nowTime = $nowTime->addMinutes(30);
 
-        if (strtotime($nowTime) == strtotime(date('Y-m-d H:m'))){
+
+        if ($nowTime->toTimeString() == "09:00:00"){
             $item = SunCalendar::whereDate('date', Carbon::today())->first();
             if (!empty($item)) {
                 $item = Calendar::find($item->calendar_id);
