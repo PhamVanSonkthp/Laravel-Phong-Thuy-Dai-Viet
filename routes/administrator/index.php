@@ -916,10 +916,10 @@ Route::prefix('administrator')->group(function () {
             'middleware' => 'can:calendars-list',
         ]);
 
-        Route::get('/import', [
+        Route::post('/import', [
             'as' => 'administrator.calendars.import',
             'uses' => 'App\Http\Controllers\Admin\CalendarsController@import',
-            'middleware' => 'can:calendars-list',
+            'middleware' => 'can:calendars-add',
         ]);
 
         Route::get('/{id}', [

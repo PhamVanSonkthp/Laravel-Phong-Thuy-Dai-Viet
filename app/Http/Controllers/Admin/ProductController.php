@@ -118,7 +118,6 @@ class ProductController extends Controller
         }
 
 
-
         foreach ($reader->getSheetIterator() as $sheet) {
             foreach ($sheet->getRowIterator() as $index => $row) {
                 if ($index > 1) {
@@ -129,7 +128,10 @@ class ProductController extends Controller
                     $item['slug'] = Formatter::trimer($cells[0]->getValue());
 
                     if ($item['slug'] != $slug) {
+
                         $slug = Formatter::trimer($cells[0]->getValue());
+
+                        Product::where('slug', $slug)->update(['product_visibility_id' => 1]);
 
                         foreach ($products as $productItem){
                             foreach ($images as $itemImage){

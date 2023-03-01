@@ -119,13 +119,9 @@ class Product extends Model implements Auditable
             if ($item->price_client >= $priceMaxClient) $priceMaxClient = $item->price_client;
             if ($item->price_agent <= $priceMinAgent) $priceMinAgent = $item->price_agent;
             if ($item->price_agent >= $priceMaxAgent) $priceMaxAgent = $item->price_agent;
-
-//            if (!$item->isEmptyInventory()){
-//
-//            }
         }
 
-        if (!empty($priceMinAgent)){
+        if (!empty($priceMinAgent) || !empty($priceMaxAgent)){
             if ($priceMinAgent != $priceMaxAgent){
                 $resultAgent = $priceMinAgent . " ~ " . $priceMaxAgent;
             }else{
@@ -133,7 +129,7 @@ class Product extends Model implements Auditable
             }
         }
 
-        if (!empty($priceMinClient)){
+        if (!empty($priceMinClient) || !empty($priceMaxClient)){
             if ($priceMinClient != $priceMaxClient){
                 $resultClient = $priceMinClient . " ~ " . $priceMaxClient;
             }else{
@@ -171,7 +167,7 @@ class Product extends Model implements Auditable
         if ($priceMinClient == PHP_INT_MIN) $priceMinClient = 0;
         if ($priceMaxClient == PHP_INT_MAX) $priceMaxClient = 0;
 
-        if (!empty($priceMinAgent)){
+        if (!empty($priceMinAgent) || !empty($priceMaxAgent)){
             if ($priceMinAgent != $priceMaxAgent){
                 $resultAgent = round($priceMinAgent + $priceMinAgent * $percent) . " ~ " . round($priceMaxAgent + $priceMaxAgent * $percent);
             }else{
@@ -179,7 +175,7 @@ class Product extends Model implements Auditable
             }
         }
 
-        if (!empty($priceMinClient)){
+        if (!empty($priceMinClient) || !empty($priceMaxClient)){
             if ($priceMinClient != $priceMaxClient){
                 $resultClient = round($priceMinClient + $priceMinClient * $percent) . " ~ " . round($priceMaxClient + $priceMaxClient * $percent);
             }else{

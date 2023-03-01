@@ -6,7 +6,8 @@
 
     <a href="{{route('administrator.'.$prefixView.'.import')}}" class="btn btn-outline-primary float-end me-2" data-bs-original-title="" title="Export excel"><i class="fa-sharp fa-solid fa-file-excel"></i></a>
 
-    <a href="{{route('administrator.'.$prefixView.'.export')}}" class="btn btn-outline-success float-end me-2" data-bs-original-title="" title="Import excel"><i class="fa-sharp fa-solid fa-file-excel"></i></a>
+    @include('administrator.components.input_import_excel')
+
 </div>
 
 
