@@ -96,6 +96,11 @@ Route::prefix('public')->group(function () {
 
 Route::prefix('user')->group(function () {
 
+    Route::prefix('voucher')->group(function () {
+        Route::post('/check-with-carts', [VoucherController::class, 'checkWithCarts']);
+    });
+
+
     Route::group(['middleware' => ['auth:sanctum']], function () {
 
         Route::prefix('auth')->group(function () {
@@ -133,7 +138,6 @@ Route::prefix('user')->group(function () {
         Route::prefix('voucher')->group(function () {
             Route::get('/', [VoucherController::class, 'list']);
             Route::post('/', [VoucherController::class, 'store']);
-            Route::post('/check-with-carts', [VoucherController::class, 'checkWithCarts']);
         });
     });
 

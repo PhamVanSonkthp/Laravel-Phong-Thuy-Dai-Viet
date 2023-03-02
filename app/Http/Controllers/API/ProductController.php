@@ -35,10 +35,14 @@ class ProductController extends Controller
             'empty_inventory' => 'numeric|min:0|max:2',
         ]);
 
-        $request->search_query = trim(str_replace(" ", "  ", $request->search_query));
+        $request->search_query = Helper::trimSpace($request->search_query);
 
         $queries = ['product_visibility_id' => 2];
         $results = RestfulAPI::response($this->model, $request, $queries, null, ['price_import'], true);
+
+        if (isset($request->category_id) && !empty($request->category_id)){
+            $results = $results->where('category_id', $request->category_id);
+        }
 
         if (isset($request->min_price)){
             $results = $results->where(function ($query) use ($request) {
@@ -78,6 +82,10 @@ class ProductController extends Controller
 
         if ($results->count() == 0){
             $results = Product::whereRaw("MATCH(name) AGAINST(? IN BOOLEAN MODE)", Helper::fullTextWildcards($request->search_query))->where('product_visibility_id', 2);
+
+            if (isset($request->category_id) && !empty($request->category_id)){
+                $results = $results->where('category_id', $request->category_id);
+            }
 
             if (isset($request->min_price)){
                 $results = $results->where(function ($query) use ($request) {
@@ -120,6 +128,10 @@ class ProductController extends Controller
             }
 
             $results = Product::where('product_visibility_id', 2);
+
+            if (isset($request->category_id) && !empty($request->category_id)){
+                $results = $results->where('category_id', $request->category_id);
+            }
 
             if (isset($request->min_price)){
                 $results = $results->where(function ($query) use ($request) {
@@ -171,6 +183,10 @@ class ProductController extends Controller
 
 
             $results = Product::where('product_visibility_id', 2);
+
+            if (isset($request->category_id) && !empty($request->category_id)){
+                $results = $results->where('category_id', $request->category_id);
+            }
 
             if (isset($request->min_price)){
                 $results = $results->where(function ($query) use ($request) {

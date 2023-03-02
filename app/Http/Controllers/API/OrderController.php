@@ -100,9 +100,9 @@ class OrderController extends Controller
 
             if ($voucher->isUnavailable()) return response()->json(Helper::errorAPI(99, [], "voucher is is unavailable"), 400);
 
-            $amount = UserCart::calculateAmountByIds($request->cart_ids);
+//            $amount = UserCart::calculateAmountByIds($request->cart_ids);
 
-            if ($voucher->isAcceptAmount($amount)) return response()->json(Helper::errorAPI(99, [], "voucher is is required min amount " . $voucher->min_amount), 400);
+            if (!$voucher->isAcceptAmount($amount)) return response()->json(Helper::errorAPI(99, [], "voucher is is required min amount " . $voucher->min_amount), 400);
 
             $discount = $voucher->amountDiscount($amount);
 
@@ -184,6 +184,8 @@ class OrderController extends Controller
             return Helper::errorAPI(99, [], "2 mảng phải bằng nhau");
         }
 
+        $amount = 0;
+
         DB::beginTransaction();
 
         $item = $this->model->create([
@@ -205,10 +207,52 @@ class OrderController extends Controller
                 'product_image' => $product->avatar(),
             ]);
 
-            $orderProduct->fill(['order_size' => $product->size, 'order_color' => $product->color])->save();
+            $amount += $product->priceByUser() * $request->quantities[$index];
+
+//            $orderProduct->fill(['order_size' => $product->size, 'order_color' => $product->color])->save();
 
             $product->decrement('inventory',$request->quantities[$index]);
         }
+
+        if (isset($request->voucher_id) && !empty($request->voucher_id)) {
+            $voucher = Voucher::find($request->voucher_id);
+
+            if (empty($voucher)) {
+                $voucher = Voucher::where('code', $request->voucher_id)->first();
+            }
+
+            if (empty($voucher)) return response()->json(Helper::errorAPI(99, [], "voucher_id invalid"), 400);
+
+            if ($voucher->isLimited()) return response()->json(Helper::errorAPI(99, [], "voucher is limited"), 400);
+
+            if ($voucher->isLimitedByUser()) return response()->json(Helper::errorAPI(99, [], "voucher is limited by user"), 400);
+
+            if ($voucher->isExpired()) return response()->json(Helper::errorAPI(99, [], "voucher is is expired"), 400);
+
+            if ($voucher->isUnavailable()) return response()->json(Helper::errorAPI(99, [], "voucher is is unavailable"), 400);
+
+//            $amount = UserCart::calculateAmountByIds($request->product_ids);
+
+            if (!$voucher->isAcceptAmount($amount)) return response()->json(Helper::errorAPI(99, [], "voucher is is required min amount " . $voucher->min_amount), 400);
+
+            $discount = $voucher->amountDiscount($amount);
+
+            $amount = $amount - $discount;
+
+            if ($amount < 0) $amount = 0;
+
+            VoucherUsed::create([
+                'user_id' => auth()->id() ?? 0,
+                'voucher_id' => $voucher->id,
+            ]);
+
+            $voucher->increment('used');
+        }
+
+        $item->update([
+            'amount' => $amount,
+            'voucher_id' => $request->voucher_id ?? 0,
+        ]);
 
         DB::commit();
 

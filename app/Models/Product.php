@@ -123,17 +123,17 @@ class Product extends Model implements Auditable
 
         if (!empty($priceMinAgent) || !empty($priceMaxAgent)){
             if ($priceMinAgent != $priceMaxAgent){
-                $resultAgent = $priceMinAgent . " ~ " . $priceMaxAgent;
+                $resultAgent = Formatter::convertNumberToMoney($priceMinAgent) . " ~ " . Formatter::convertNumberToMoney($priceMaxAgent);
             }else{
-                $resultAgent = $priceMinAgent;
+                $resultAgent = Formatter::convertNumberToMoney($priceMinAgent);
             }
         }
 
         if (!empty($priceMinClient) || !empty($priceMaxClient)){
             if ($priceMinClient != $priceMaxClient){
-                $resultClient = $priceMinClient . " ~ " . $priceMaxClient;
+                $resultClient = Formatter::convertNumberToMoney($priceMinClient) . " ~ " . Formatter::convertNumberToMoney($priceMaxClient);
             }else{
-                $resultClient = $priceMinClient;
+                $resultClient = Formatter::convertNumberToMoney($priceMinClient);
             }
         }
 
@@ -169,17 +169,17 @@ class Product extends Model implements Auditable
 
         if (!empty($priceMinAgent) || !empty($priceMaxAgent)){
             if ($priceMinAgent != $priceMaxAgent){
-                $resultAgent = round($priceMinAgent + $priceMinAgent * $percent) . " ~ " . round($priceMaxAgent + $priceMaxAgent * $percent);
+                $resultAgent = Formatter::convertNumberToMoney(round($priceMinAgent + $priceMinAgent * $percent)) . " ~ " . Formatter::convertNumberToMoney(round($priceMaxAgent + $priceMaxAgent * $percent));
             }else{
-                $resultAgent = round($priceMinAgent + $priceMinAgent * $percent);
+                $resultAgent = Formatter::convertNumberToMoney(round($priceMinAgent + $priceMinAgent * $percent));
             }
         }
 
         if (!empty($priceMinClient) || !empty($priceMaxClient)){
             if ($priceMinClient != $priceMaxClient){
-                $resultClient = round($priceMinClient + $priceMinClient * $percent) . " ~ " . round($priceMaxClient + $priceMaxClient * $percent);
+                $resultClient = Formatter::convertNumberToMoney(round($priceMinClient + $priceMinClient * $percent)) . " ~ " . Formatter::convertNumberToMoney(round($priceMaxClient + $priceMaxClient * $percent));
             }else{
-                $resultClient = round($priceMinClient + $priceMinClient * $percent);
+                $resultClient = Formatter::convertNumberToMoney(round($priceMinClient + $priceMinClient * $percent));
             }
         }
 

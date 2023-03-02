@@ -442,4 +442,10 @@ class Helper extends Model
 
         return $searchTerm;
     }
+
+
+    public static function trimSpace($input)
+    {
+        return trim(str_replace("  ", " ", $input));
+    }
 }

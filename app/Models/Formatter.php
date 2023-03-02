@@ -150,10 +150,16 @@ class Formatter extends Model
         return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $input));
     }
 
+    public static function convertNumberToMoney($input)
+    {
+        if (empty($input)) return 0;
+        return number_format($input,0,".",".");
+    }
+
     public static function formatMoney($input)
     {
         if (empty($input)) return 0;
-        return number_format($input);
+        return number_format($input,0,".",".");
     }
 
     public static function formatNumber($input)

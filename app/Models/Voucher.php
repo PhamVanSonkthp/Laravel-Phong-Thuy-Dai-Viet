@@ -50,6 +50,8 @@ class Voucher extends Model implements Auditable
     public function isLimitedByUser(): bool
     {
 
+        if ($this->max_use_by_user == 0) return false;
+
         $total = VoucherUsed::where('user_id', auth()->id())->where('voucher_id', $this->id)->count();
 
         return $total >= $this->max_use_by_user;
@@ -62,11 +64,18 @@ class Voucher extends Model implements Auditable
 
     public function isUnavailable(): bool
     {
+        if ($this->max_use_by_user != 0){
+            if (!(auth('sanctum')->check() || auth()->check())){
+                return false;
+            }
+        }
+
         return strtotime(now()) < strtotime($this->begin);
     }
 
     public function isAcceptAmount($amount): bool
     {
+        if ($this->min_amount == 0) return true;
         return $this->min_amount >= $amount;
     }
 

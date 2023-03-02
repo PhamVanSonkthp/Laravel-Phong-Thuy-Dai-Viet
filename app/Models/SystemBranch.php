@@ -67,6 +67,8 @@ class SystemBranch extends Model implements Auditable
             'name' => $request->name,
             'description' => $request->description,
             'phone' => $request->phone,
+            'longitude' => $request->longitude,
+            'latitude' => $request->latitude,
         ];
 
         $item = Helper::storeByQuery($this, $request, $dataInsert);
@@ -80,6 +82,8 @@ class SystemBranch extends Model implements Auditable
             'name' => $request->name,
             'description' => $request->description,
             'phone' => $request->phone,
+            'longitude' => $request->longitude,
+            'latitude' => $request->latitude,
         ];
         $item = Helper::updateByQuery($this, $request, $id, $dataUpdate);
         return $this->findById($item->id);

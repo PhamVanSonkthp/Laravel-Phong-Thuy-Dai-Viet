@@ -92,7 +92,7 @@ class VoucherController extends Controller
 
         $amount = UserCart::calculateAmountByIds($request->cart_ids);
 
-        if ($voucher->isAcceptAmount($amount)) return response()->json(Helper::errorAPI(99,[],"voucher is is required min amount ". $voucher->min_amount) , 400);
+        if (!$voucher->isAcceptAmount($amount)) return response()->json(Helper::errorAPI(99,[],"voucher is is required min amount ". $voucher->min_amount) , 400);
 
         $discount = $voucher->amountDiscount($amount);
 

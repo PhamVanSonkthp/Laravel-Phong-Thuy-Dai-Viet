@@ -23,6 +23,10 @@
 
                     @include('administrator.components.require_input_text' , ['name' => 'phone' , 'label' => 'Số điện thoại'])
 
+                    @include('administrator.components.require_input_text' , ['name' => 'longitude' , 'label' => 'Kinh độ'])
+
+                    @include('administrator.components.require_input_text' , ['name' => 'latitude' , 'label' => 'Vĩ độ'])
+
                     @if($isSingleImage)
                         <div class="mt-3 mb-3">
                             @include('administrator.components.upload_image', ['post_api' => $imagePostUrl, 'table' => $table, 'image' => $imagePathSingple , 'relate_id' => $relateImageTableId])
