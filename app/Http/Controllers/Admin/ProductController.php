@@ -12,8 +12,10 @@ use App\Models\Product;
 use App\Traits\BaseControllerTrait;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 use Maatwebsite\Excel\Facades\Excel;
+use Rinvex\Attributes\Events\EntityWasDeleted;
 use function redirect;
 use function view;
 
@@ -123,41 +125,45 @@ class ProductController extends Controller
                 if ($index > 1) {
                     $cells = $row->getCells();
 
+                    if (empty($cells[0]->getValue())) break;
+
                     $item = [];
 
                     $item['slug'] = Formatter::trimer($cells[0]->getValue());
 
                     if ($item['slug'] != $slug) {
 
-                        $slug = Formatter::trimer($cells[0]->getValue());
+                        $slug = $item['slug'];
 
                         Product::where('slug', $slug)->update(['product_visibility_id' => 1]);
 
-                        foreach ($products as $productItem){
-                            foreach ($images as $itemImage){
-                                Image::create([
-                                    'uuid' => Helper::randomString(),
-                                    'table' => 'products',
-                                    'image_path' => $itemImage['path'],
-                                    'image_name' => $itemImage['name'],
-                                    'relate_id' => $productItem->id,
-                                ]);
-                            }
-                        }
-                        $products = [];
                         if ($index != 2){
+                            foreach ($products as $productItem){
+                                foreach ($images as $itemImage){
+                                    Image::create([
+                                        'uuid' => Helper::randomString(),
+                                        'table' => 'products',
+                                        'image_path' => $itemImage['path'],
+                                        'image_name' => $itemImage['name'],
+                                        'relate_id' => $productItem->id,
+                                    ]);
+                                }
+                            }
+
                             $images = [];
+                            $products = [];
                         }
 
                         $group_product_id++;
-                    }else{
-                        if (!empty(Formatter::trimer($cells[23]->getValue()))){
-                            $images[] = [
-                                'path' => Formatter::trimer($cells[23]->getValue()),
-                                'name' => Formatter::trimer($cells[24]->getValue()),
-                            ];
-                        }
                     }
+
+                    if (!empty(Formatter::trimer($cells[23]->getValue()))){
+                        $images[] = [
+                            'path' => Formatter::trimer($cells[23]->getValue()),
+                            'name' => Formatter::trimer($cells[24]->getValue()),
+                        ];
+                    }
+
 
                     if (count($cells) == 0 || $cells[0]->getValue() == ""){
                         return response()->json($productAdded);
@@ -220,8 +226,6 @@ class ProductController extends Controller
                     $item['weight'] = Formatter::trimer($cells[27]->getValue());
                     $item['type_weight'] = Formatter::trimer($cells[28]->getValue());
 
-
-
                     $item['group_product_id'] = $group_product_id;
 
                     $product = Product::create($item);
@@ -233,11 +237,11 @@ class ProductController extends Controller
 
                     $attr = [];
 
-                    if (!empty($attr1)) {
+                    if (!empty($attr1) && $attr1 != "Default Title") {
                         $attr['size'] = $attr1;
                     }
 
-                    if (!empty($attr2)) {
+                    if (!empty($attr2) && $attr2 != "Default Title") {
                         $attr['color'] = $attr2;
                     }
                     $product->fill($attr)->save();

@@ -33,6 +33,8 @@ class News extends Model implements Auditable
     public function toArray()
     {
         $array = parent::toArray();
+        $array['content'] = str_replace("<img src=\"/","<img src=\"" . env('APP_URL') . "/",$array['content']);
+
         $array['short_title'] = Formatter::getShortDescriptionAttribute($this->title);
         $array['short_content'] = Formatter::getShortDescriptionAttribute($this->content, 30);
         $array['category'] = $this->category;

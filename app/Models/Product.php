@@ -34,8 +34,9 @@ class Product extends Model implements Auditable
     public function toArray()
     {
         $array = parent::toArray();
-        $array['image_path_avatar'] = $this->avatar();
+        $array['description'] = str_replace("<img src=\"/","<img src=\"" . env('APP_URL') . "/",$array['description']);
 
+        $array['image_path_avatar'] = $this->avatar();
         $array['path_images'] = $this->images;
         if (count($array['path_images']) == 0){
             $array['path_images'][] = [

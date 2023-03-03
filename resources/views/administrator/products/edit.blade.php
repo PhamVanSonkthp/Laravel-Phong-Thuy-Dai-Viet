@@ -34,27 +34,27 @@
 
             @include('administrator.components.select_category' , ['name' => 'category_id' ,'html_category' => \App\Models\Category::getCategory(isset($item) ? optional($item)->category_id : ''), 'can_create' => true])
 
-            <div id="container_infor__attributes" class="p-3">
-                <label>
-                    Sản phẩm có biển thể
-                </label>
-                <button onclick="addValueAttribute()" type="button" class="btn btn-outline-success"><i
-                        class="fa-solid fa-plus"></i></button>
-            </div>
+{{--            <div id="container_infor__attributes" class="p-3">--}}
+{{--                <label>--}}
+{{--                    Sản phẩm có biển thể--}}
+{{--                </label>--}}
+{{--                <button onclick="addValueAttribute()" type="button" class="btn btn-outline-success"><i--}}
+{{--                        class="fa-solid fa-plus"></i></button>--}}
+{{--            </div>--}}
 
-            <div id="bassic_price">
+{{--            <div id="bassic_price">--}}
 
-            </div>
+{{--            </div>--}}
 
-            <input id="_headers" name="_headers" type="text" value="" class="hidden">
+{{--            <input id="_headers" name="_headers" type="text" value="" class="hidden">--}}
 
-            <input id="_attributes" name="_attributes" type="text" value="" class="hidden">
+{{--            <input id="_attributes" name="_attributes" type="text" value="" class="hidden">--}}
 
-            <div id="table_bassic_price" class="card p-3 m-3" style="display: none;">
+{{--            <div id="table_bassic_price" class="card p-3 m-3" style="display: none;">--}}
 
-            </div>
+{{--            </div>--}}
 
-            <div id="price">
+            <div id="price1">
                 @include('administrator.components.require_input_number' , ['name' => 'price_import' , 'label' => 'Giá nhập'])
 
                 @include('administrator.components.require_input_number' , ['name' => 'price_client' , 'label' => 'Giá bán lẻ'])
@@ -80,6 +80,8 @@
         let _attributes = []
 
         function renderTableAttributeEdit(){
+
+            return;
 
             $('#_headers').val(JSON.stringify(_headers))
             $('#_attributes').val(JSON.stringify(_attributes))
