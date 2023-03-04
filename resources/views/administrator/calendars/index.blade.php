@@ -36,7 +36,7 @@
                                     <th>Thời tiết</th>
                                     <th>Điểm số</th>
                                     <th>Thời gian tạo</th>
-                                    <th>Hành động</th>
+{{--                                    <th>Hành động</th>--}}
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -63,19 +63,19 @@
                                         <td>{{$item->weather}}</td>
                                         <td>{{$item->score}}</td>
                                         <td>{{\App\Models\Formatter::getDateTime($item->created_at)}}</td>
-                                        <td>
-                                            <a href="{{route('administrator.'.$prefixView.'.edit' , ['id'=> $item->id ])}}"
-                                               class="btn btn-outline-secondary btn-sm edit" title="Edit">
-                                                <i class="fa-solid fa-pen"></i>
-                                            </a>
+{{--                                        <td>--}}
+{{--                                            <a href="{{route('administrator.'.$prefixView.'.edit' , ['id'=> $item->id ])}}"--}}
+{{--                                               class="btn btn-outline-secondary btn-sm edit" title="Edit">--}}
+{{--                                                <i class="fa-solid fa-pen"></i>--}}
+{{--                                            </a>--}}
 
-                                            <a href="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}"
-                                               data-url="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}"
-                                               class="btn btn-outline-danger btn-sm delete action_delete"
-                                               title="Delete">
-                                                <i class="fa-solid fa-x"></i>
-                                            </a>
-                                        </td>
+{{--                                            <a href="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}"--}}
+{{--                                               data-url="{{route('administrator.'.$prefixView.'.delete' , ['id'=> $item->id])}}"--}}
+{{--                                               class="btn btn-outline-danger btn-sm delete action_delete"--}}
+{{--                                               title="Delete">--}}
+{{--                                                <i class="fa-solid fa-x"></i>--}}
+{{--                                            </a>--}}
+{{--                                        </td>--}}
                                     </tr>
                                 @endforeach
 
