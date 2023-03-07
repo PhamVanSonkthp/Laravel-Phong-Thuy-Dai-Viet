@@ -18,6 +18,8 @@
 
                     @include('administrator.components.require_input_text' , ['name' => 'name' , 'label' => 'Tên'])
 
+                    @include('administrator.components.input_number' , ['name' => 'index' , 'label' => 'Thứ tự hiển thị (sắp xếp từ nhỏ tới lớn)'])
+
                     <div class="form-group mt-3">
 
                         @if($isSingleImage)

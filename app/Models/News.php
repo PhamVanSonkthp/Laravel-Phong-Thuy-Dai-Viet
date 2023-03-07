@@ -23,6 +23,10 @@ class News extends Model implements Auditable
         return $this->belongsTo(CategoryNew::class);
     }
 
+    public function newType(){
+        return $this->belongsTo(NewType::class);
+    }
+
     // end
 
     public function getTableName()
@@ -73,6 +77,7 @@ class News extends Model implements Auditable
             'title' => $request->title,
             'content' => $request->contents,
             'category_id' => $request->category_id ?? 0,
+            'new_type_id' => $request->new_type_id ?? 1,
             'slug' => Helper::addSlug($this,'slug', $request->title),
         ];
 
@@ -87,6 +92,7 @@ class News extends Model implements Auditable
             'title' => $request->title,
             'content' => $request->contents,
             'category_id' => $request->category_id ?? 0,
+            'new_type_id' => $request->new_type_id ?? 1,
             'slug' => Helper::addSlug($this,'slug', $request->title),
         ];
         $item = Helper::updateByQuery($this, $request, $id, $dataUpdate);

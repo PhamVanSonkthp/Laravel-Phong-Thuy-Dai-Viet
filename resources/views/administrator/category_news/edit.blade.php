@@ -18,6 +18,8 @@
                 <div class="col-md-12">
                     @include('administrator.components.require_input_text' , ['name' => 'name' , 'label' => 'Tên'])
 
+                    @include('administrator.components.input_number' , ['name' => 'index' , 'label' => 'Thứ tự hiển thị (sắp xếp từ nhỏ tới lớn)'])
+
                     @if($isSingleImage)
                         <div class="mt-3 mb-3">
                             @include('administrator.components.upload_image', ['post_api' => $imagePostUrl, 'table' => $table, 'image' => $imagePathSingple , 'relate_id' => $relateImageTableId])

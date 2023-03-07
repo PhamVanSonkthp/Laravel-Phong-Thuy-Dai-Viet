@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\CategoryNew;
 use App\Models\Chat;
 use App\Models\ChatGroup;
+use App\Models\Formatter;
 use App\Models\ParticipantChat;
 use App\Models\Product;
 use App\Models\RestfulAPI;
@@ -26,7 +27,10 @@ class CategoryNewsController extends Controller
 
     public function list(Request $request)
     {
-        $results = RestfulAPI::response($this->modelCategoryNew, $request);
+        $results = RestfulAPI::response($this->modelCategoryNew, $request, null, null, null, true);
+
+        $results = $results->orderBy('index', 'DESC')->paginate(Formatter::getLimitRequest(optional($request)->limit))->appends(request()->query());
+
         return response()->json($results);
     }
 }

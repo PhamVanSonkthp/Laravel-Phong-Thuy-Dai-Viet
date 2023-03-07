@@ -19,6 +19,7 @@ class CreateCategoriesTable extends Migration
             $table->text('slug');
             $table->text('description')->nullable();
             $table->bigInteger('parent_id')->default(0);
+            $table->integer('index')->default(0);
             $table->timestamps();
         });
     }

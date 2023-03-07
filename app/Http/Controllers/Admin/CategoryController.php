@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Exports\ModelExport;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Formatter;
 use App\Traits\BaseControllerTrait;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -25,7 +26,10 @@ class CategoryController extends Controller
 
     public function index(Request $request)
     {
-        $items = $this->model->searchByQuery($request);
+        $items = $this->model->searchByQuery($request, null, null, null, true);
+
+        $items = $items->orderBy('index', 'DESC')->paginate(Formatter::getLimitRequest(optional($request)->limit))->appends(request()->query());
+
         return view('administrator.' . $this->prefixView . '.index', compact('items'));
     }
 

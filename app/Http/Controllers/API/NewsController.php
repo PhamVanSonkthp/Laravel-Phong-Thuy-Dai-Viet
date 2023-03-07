@@ -27,7 +27,13 @@ class NewsController extends Controller
     public function list(Request $request)
     {
 
-        $results = RestfulAPI::response($this->modelNew, $request);
+        $results = RestfulAPI::response($this->modelNew, $request,null,null,null,true);
+
+        if (!empty($request->new_type_id)){
+            $results = $results->where('new_type_id', $request->new_type_id);
+        }
+
+        $results = $results->latest()->paginate(Formatter::getLimitRequest(optional($request)->limit))->appends(request()->query());
 
         foreach ($results as $item){
             $item->category;

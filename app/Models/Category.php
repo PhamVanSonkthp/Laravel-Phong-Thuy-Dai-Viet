@@ -71,15 +71,16 @@ class Category extends Model implements Auditable
         return $this->hasOne(User::class,'id','created_by_id');
     }
 
-    public function searchByQuery($request, $queries = [])
+    public function searchByQuery($request, $queries = [], $randomRecord = null, $makeHiddens = null, $isCustom = false)
     {
-        return Helper::searchByQuery($this, $request, $queries);
+        return Helper::searchByQuery($this, $request, $queries, $randomRecord, $makeHiddens, $isCustom);
     }
 
     public function storeByQuery($request)
     {
         $dataInsert = [
             'name' => $request->name,
+            'index' => $request->index ?? 0,
             'description' => $request->description,
             'slug' => Helper::addSlug($this,'slug', $request->name),
         ];
@@ -93,6 +94,7 @@ class Category extends Model implements Auditable
     {
         $dataUpdate = [
             'name' => $request->name,
+            'index' => $request->index ?? 0,
             'description' => $request->description,
             'slug' => Helper::addSlug($this,'slug', $request->name),
         ];
