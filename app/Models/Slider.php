@@ -23,7 +23,7 @@ class Slider extends Model implements Auditable
     public function toArray()
     {
         $array = parent::toArray();
-        $array['image_path_avatar'] = $this->avatar();
+        $array['image_path_avatar'] = $this->avatar("original");
         $array['path_images'] = $this->images;
         return $array;
     }
