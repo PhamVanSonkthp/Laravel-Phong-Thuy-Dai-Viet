@@ -33,7 +33,11 @@ class NewsController extends Controller
             $results = $results->where('new_type_id', $request->new_type_id);
         }
 
-        $results = $results->latest()->paginate(Formatter::getLimitRequest(optional($request)->limit))->appends(request()->query());
+        if ($results->count() == 0){
+            $results = $this->modelNew->latest()->paginate(Formatter::getLimitRequest(optional($request)->limit))->appends(request()->query());
+        }else{
+            $results = $results->latest()->paginate(Formatter::getLimitRequest(optional($request)->limit))->appends(request()->query());
+        }
 
         foreach ($results as $item){
             $item->category;

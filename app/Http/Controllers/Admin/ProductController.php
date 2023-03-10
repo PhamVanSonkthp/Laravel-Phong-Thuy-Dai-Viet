@@ -225,6 +225,8 @@ class ProductController extends Controller
                     $item['seo_description'] = Formatter::trimer($cells[26]->getValue());
                     $item['weight'] = Formatter::trimer($cells[27]->getValue());
                     $item['type_weight'] = Formatter::trimer($cells[28]->getValue());
+                    $item['primary_id'] = Formatter::trimer($cells[31]->getValue());
+                    $item['second_id'] = Formatter::trimer($cells[32]->getValue());
 
                     $item['group_product_id'] = $group_product_id;
 

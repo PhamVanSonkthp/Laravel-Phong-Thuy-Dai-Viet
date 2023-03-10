@@ -38,12 +38,12 @@
             defaultDate: "{{ \App\Models\Formatter::getDateTime(now()) }}",
         });
 
-    });
+        $("#input_search_query").on("keydown", function search(e) {
+            if (e.keyCode == 13) {
+                onSearchQuery()
+            }
+        });
 
-    $("#input_search_query").on("keydown", function search(e) {
-        if (e.keyCode == 13) {
-            onSearchQuery()
-        }
     });
 
 

@@ -17,7 +17,7 @@
                 <div class="col-md-12">
 
                     <div class="form-group mt-3">
-                        <label><Tiêu></Tiêu> đề</label>
+                        <label>Tiêu đề</label>
                         <input type="text" name="title" class="form-control @error('title') is-invalid @enderror"
                                value="{{old('title')}}" required>
                         @error('title')
@@ -25,9 +25,9 @@
                         @enderror
                     </div>
 
-                    @include('administrator.components.select_category' , ['name' => 'new_type_id' ,'html_category' => \App\Models\NewType::getCategory(isset($item) ? optional($item)->new_type_id : '')])
+                    @include('administrator.components.select_category' , ['lable' => 'Tin hiển thị ở App','name' => 'new_type_id' ,'html_category' => \App\Models\NewType::getCategory(isset($item) ? optional($item)->new_type_id : '')])
 
-                    @include('administrator.components.select_category' , ['name' => 'category_id' ,'html_category' => \App\Models\CategoryNew::getCategory(isset($item) ? optional($item)->category_id : ''), 'can_create' => true])
+                    @include('administrator.components.select_category' , ['lable' => 'Danh mục','name' => 'category_id' ,'html_category' => \App\Models\CategoryNew::getCategory(isset($item) ? optional($item)->category_id : ''), 'can_create' => true])
 
                     <div class="form-group mt-3">
 

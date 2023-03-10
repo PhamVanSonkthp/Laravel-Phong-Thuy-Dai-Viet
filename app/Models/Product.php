@@ -442,6 +442,7 @@ class Product extends Model implements Auditable
                 'inventory' => Formatter::formatNumberToDatabase($request->inventory),
                 'product_visibility_id' => $product_visibility_id,
                 'group_product_id' => $group_product_id,
+                'sku' => $request->sku,
             ];
 
             $item = Helper::storeByQuery($this, $request, $dataInsert);
@@ -465,6 +466,7 @@ class Product extends Model implements Auditable
             'price_partner' => Formatter::formatMoneyToDatabase($request->price_partner),
             'category_id' => $this->firstOrCreateCategory($request->category_id),
             'inventory' => Formatter::formatNumberToDatabase($request->inventory),
+            'sku' => $request->sku,
         ];
         $item = Helper::updateByQuery($this, $request, $id, $dataUpdate);
         return $this->findById($item->id);

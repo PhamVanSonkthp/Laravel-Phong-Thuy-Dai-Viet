@@ -83,6 +83,41 @@ Route::prefix('/')->group(function () {
 ///
     });
 
+    Route::get('/update-sku', function () {
+
+        $path = storage_path() . '/app/tmp/product.xlsx';
+
+        $reader = ReaderEntityFactory::createReaderFromFile($path);
+
+        $reader->open($path);
+
+        foreach ($reader->getSheetIterator() as $sheet) {
+            foreach ($sheet->getRowIterator() as $index => $row) {
+                // do stuff with the row
+
+                if ($index > 0) {
+                    $cells = $row->getCells();
+
+                    $iamge_path = $cells[23]->getValue();
+
+                    if (!empty($iamge_path)) {
+                        $product = Product::where('feature_image_path', $iamge_path)->orderBy('id','DESC')->first();
+
+                        if (!empty($product)){
+                            $product->update([
+                                'primary_id' => $cells[31]->getValue(),
+                                'second_id' => $cells[32]->getValue(),
+                            ]);
+                        }
+                    }
+                }
+            }
+        }
+        $reader->close();
+
+        dd('ok');
+    });
+
 
 //    Route::get('/quot', function () {
 //

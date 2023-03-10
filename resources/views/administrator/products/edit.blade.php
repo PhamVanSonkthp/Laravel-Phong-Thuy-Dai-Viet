@@ -34,7 +34,7 @@
 
             @include('administrator.components.select_category' , ['name' => 'category_id' ,'html_category' => \App\Models\Category::getCategory(isset($item) ? optional($item)->category_id : ''), 'can_create' => true])
 
-{{--            <div id="container_infor__attributes" class="p-3">--}}
+            {{--            <div id="container_infor__attributes" class="p-3">--}}
 {{--                <label>--}}
 {{--                    Sản phẩm có biển thể--}}
 {{--                </label>--}}
@@ -64,6 +64,9 @@
                 @include('administrator.components.require_input_number' , ['name' => 'price_partner' , 'label' => 'Giá CTV (Cộng tác viên)'])
 
                 @include('administrator.components.require_input_number' , ['name' => 'inventory' , 'label' => 'Tồn kho'])
+
+                @include('administrator.components.input_text' , ['name' => 'sku' , 'label' => 'SKU'])
+
             </div>
 
             @include('administrator.components.button_save')

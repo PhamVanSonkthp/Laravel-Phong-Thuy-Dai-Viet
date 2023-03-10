@@ -62,6 +62,8 @@
                 @include('administrator.components.input_number' , ['name' => 'price_partner' , 'label' => 'Giá CTV (Cộng tác viên)'])
 
                 @include('administrator.components.input_number' , ['name' => 'inventory' , 'label' => 'Tồn kho'])
+
+                @include('administrator.components.input_text' , ['name' => 'sku' , 'label' => 'SKU'])
             </div>
 
             @include('administrator.components.button_save')

@@ -41,6 +41,8 @@ class CreateProductsTable extends Migration
             $table->float('weight')->default(0);
             $table->string('type_weight')->default('kg');
             $table->string('feature_image_path')->nullable();
+            $table->string('primary_id')->nullable();
+            $table->string('second_id')->nullable();
             $table->timestamps();
         });
 

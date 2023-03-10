@@ -96,10 +96,10 @@ class Helper extends Model
         $columns = Schema::getColumnListing($object->getTableName());
         $query = $object->query();
 
-        $searchLikeColumns = ['name', 'title', 'search_query'];
+        $searchLikeColumns = ['name', 'title', 'primary_id', 'second_id', 'search_query','sku'];
         $searchColumnBanned = ['limit', 'page', 'with_trashed'];
 
-        if (!empty($request)){
+        if (!empty($request)) {
             foreach ($request->all() as $key => $item) {
                 $item = trim($item);
 
@@ -385,7 +385,7 @@ class Helper extends Model
                         'connect_timeout' => 5, // Connection timeout
                     ],
                 );
-            }catch (Exception $e){
+            } catch (Exception $e) {
 
             }
 
@@ -393,7 +393,8 @@ class Helper extends Model
 
     }
 
-    public static function errorAPI($code, $data, $message){
+    public static function errorAPI($code, $data, $message)
+    {
         DB::rollBack();
         return [
             'success' => false,
@@ -404,11 +405,13 @@ class Helper extends Model
 
     }
 
-    public static function randomString(){
+    public static function randomString()
+    {
         return Str::random(10);
     }
 
-    public static function sendEmailToShop($subject, $body){
+    public static function sendEmailToShop($subject, $body)
+    {
         $email = env('EMAIL_SHOP');
 
         $user = (new User([

@@ -10,6 +10,7 @@ use App\Http\Controllers\API\NewsController;
 use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\ProductController;
+use App\Http\Controllers\API\SettingController;
 use App\Http\Controllers\API\SliderController;
 use App\Http\Controllers\API\SystemBranchController;
 use App\Http\Controllers\API\VoucherController;
@@ -92,6 +93,11 @@ Route::prefix('public')->group(function () {
         Route::post('/check-exist', [AuthController::class, 'checkExist']);
         Route::post('/reset-password', [AuthController::class, 'resetPassword']);
     });
+
+    Route::prefix('setting')->group(function () {
+        Route::get('/', [SettingController::class, 'get']);
+    });
+
 });
 
 Route::prefix('user')->group(function () {

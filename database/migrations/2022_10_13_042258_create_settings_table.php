@@ -16,6 +16,7 @@ class CreateSettingsTable extends Migration
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
             $table->integer('number_trail');
+            $table->string('phone_zalo')->nullable();
             $table->string('feature_image_name')->nullable();
             $table->string('feature_image_path')->nullable();
             $table->timestamps();
