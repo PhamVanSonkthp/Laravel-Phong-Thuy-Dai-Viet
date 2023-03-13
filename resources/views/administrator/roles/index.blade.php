@@ -48,13 +48,10 @@
 
                     <div class="card-body">
 
-                        @include('administrator.components.checkbox_delete_table')
-
                         <div class="table-responsive product-table">
                             <table class="table table-hover">
                                 <thead>
                                 <tr>
-                                    <th><input id="check_box_delete_all" type="checkbox" class="checkbox-parent" onclick="onSelectCheckboxDeleteItem()"></th>
                                     <th>#</th>
                                     <th>Tên</th>
                                     <th>Mô tả</th>

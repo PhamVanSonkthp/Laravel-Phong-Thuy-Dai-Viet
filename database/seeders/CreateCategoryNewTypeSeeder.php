@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\CategoryNewType;
 use App\Models\NewType;
 use Illuminate\Database\Seeder;
 
-class CreateNewTypeSeeder extends Seeder
+class CreateCategoryNewTypeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,11 +15,11 @@ class CreateNewTypeSeeder extends Seeder
      */
     public function run()
     {
-        NewType::firstOrCreate([
+        CategoryNewType::firstOrCreate([
             "name" => "App ngày tốt",
         ]);
 
-        NewType::firstOrCreate([
+        CategoryNewType::firstOrCreate([
             "name" => "App bán hàng",
         ]);
     }

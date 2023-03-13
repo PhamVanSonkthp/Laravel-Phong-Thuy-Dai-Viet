@@ -118,8 +118,22 @@ class Product extends Model implements Auditable
         foreach ($productsAttributes as $item){
             if ($item->price_client <= $priceMinClient) $priceMinClient = $item->price_client;
             if ($item->price_client >= $priceMaxClient) $priceMaxClient = $item->price_client;
-            if ($item->price_agent <= $priceMinAgent) $priceMinAgent = $item->price_agent;
-            if ($item->price_agent >= $priceMaxAgent) $priceMaxAgent = $item->price_agent;
+
+
+            if (auth('sanctum')->check()){
+
+                if (auth('sanctum')->user()->user_type_id == 2){
+                    if ($item->price_agent <= $priceMinAgent) $priceMinAgent = $item->price_agent;
+                    if ($item->price_agent >= $priceMaxAgent) $priceMaxAgent = $item->price_agent;
+                }elseif (auth('sanctum')->user()->user_type_id == 3){
+                    if ($item->price_partner <= $priceMinAgent) $priceMinAgent = $item->price_partner;
+                    if ($item->price_partner >= $priceMaxAgent) $priceMaxAgent = $item->price_partner;
+                }
+            }else{
+                if ($item->price_agent <= $priceMinAgent) $priceMinAgent = $item->price_agent;
+                if ($item->price_agent >= $priceMaxAgent) $priceMaxAgent = $item->price_agent;
+            }
+
         }
 
         if (!empty($priceMinAgent) || !empty($priceMaxAgent)){
@@ -138,7 +152,7 @@ class Product extends Model implements Auditable
             }
         }
 
-        if (auth('sanctum')->check() && auth('sanctum')->user()->user_type_id == 2){
+        if (auth('sanctum')->check() && auth('sanctum')->user()->user_type_id != 1){
             return $resultAgent . "";
         } else {
             return $resultClient . "";

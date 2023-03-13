@@ -25,9 +25,7 @@
                         @enderror
                     </div>
 
-                    @include('administrator.components.select_category' , ['lable' => 'Tin hiển thị ở App','name' => 'new_type_id' ,'html_category' => \App\Models\NewType::getCategory(isset($item) ? optional($item)->new_type_id : '')])
-
-                    @include('administrator.components.select_category' , ['lable' => 'Danh mục','name' => 'category_id' ,'html_category' => \App\Models\CategoryNew::getCategory(isset($item) ? optional($item)->category_id : ''), 'can_create' => true])
+                    @include('administrator.components.select_category' , ['label'=>'Danh mục','name' => 'category_id' ,'html_category' => \App\Models\CategoryNew::getCategory(isset($item) ? optional($item)->category_id : ''), 'isDefaultFirst' => true])
 
                     <div class="form-group mt-3">
 

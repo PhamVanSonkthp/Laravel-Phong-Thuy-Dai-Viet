@@ -46,7 +46,7 @@
                                             <img class="rounded-circle" src="{{$item->avatar()}}" alt="">
                                         </td>
                                         <td>{{ optional($item->category)->name}}</td>
-                                        <td>{{ optional($item->newType)->name}}</td>
+                                        <td>{{ optional(optional($item->category)->categoryNewType)->name}}</td>
                                         <td>{{\App\Models\Formatter::getDateTime($item->created_at)}}</td>
                                         <td>
                                             <a href="{{route('administrator.'.$prefixView.'.edit' , ['id'=> $item->id ])}}"

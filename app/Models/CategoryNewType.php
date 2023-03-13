@@ -7,9 +7,10 @@ use App\Traits\DeleteModelTrait;
 use App\Traits\StorageImageTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Maatwebsite\Excel\Facades\Excel;
 use OwenIt\Auditing\Contracts\Auditable;
 
-class CategoryNew extends Model implements Auditable
+class CategoryNewType extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
     use HasFactory;
@@ -20,33 +21,22 @@ class CategoryNew extends Model implements Auditable
 
     // begin
 
-    public function categoryNewType(){
-        return $this->hasOne(CategoryNewType::class,'id','category_type_id');
-    }
 
-    // end
 
-    public static function getCategory($parent_id = null)
-    {
-        $data = CategoryNew::all();
+    public static function getCategory($parent_id = null){
+        $data = CategoryNewType::all();
         $recusive = new Recusive($data);
         $htmlOption = $recusive->categoryRecusive($parent_id);
 
         return $htmlOption;
     }
 
-    public function rootParent($itemCurrent = null)
-    {
-        if (!empty($itemCurrent)) {
-            $item = Category::find($itemCurrent->parent_id);
-        } else {
-            $item = $this;
-        }
 
-        if (empty($item)) {
-            return $itemCurrent;
-        }
-        return $this->rootParent($item);
+    // end
+
+    public function getTableName()
+    {
+        return Helper::getTableName($this);
     }
 
     public function toArray()
@@ -57,14 +47,9 @@ class CategoryNew extends Model implements Auditable
         return $array;
     }
 
-    public function getTableName()
-    {
-        return Helper::getTableName($this);
-    }
-
     public function avatar($size = "100x100")
     {
-        return Helper::getDefaultIcon($this, $size);
+       return Helper::getDefaultIcon($this, $size);
     }
 
     public function image()
@@ -77,9 +62,8 @@ class CategoryNew extends Model implements Auditable
         return Helper::images($this);
     }
 
-    public function createdBy()
-    {
-        return $this->hasOne(User::class, 'id', 'created_by_id');
+    public function createdBy(){
+        return $this->hasOne(User::class,'id','created_by_id');
     }
 
     public function searchByQuery($request, $queries = [], $randomRecord = null, $makeHiddens = null, $isCustom = false)
@@ -90,11 +74,9 @@ class CategoryNew extends Model implements Auditable
     public function storeByQuery($request)
     {
         $dataInsert = [
-            'name' => $request->name,
-            'index' => $request->index ?? 0,
-            'category_type_id' => $request->category_type_id ?? 1,
-            'parent_id' => Formatter::formatNumberToDatabase($request->parent_id),
-            'slug' => Helper::addSlug($this, 'slug', $request->name),
+            'title' => $request->title,
+            'content' => $request->contents,
+            'slug' => Helper::addSlug($this,'slug', $request->title),
         ];
 
         $item = Helper::storeByQuery($this, $request, $dataInsert);
@@ -105,11 +87,9 @@ class CategoryNew extends Model implements Auditable
     public function updateByQuery($request, $id)
     {
         $dataUpdate = [
-            'name' => $request->name,
-            'index' => $request->index ?? 0,
-            'category_type_id' => $request->category_type_id ?? 1,
-            'parent_id' => Formatter::formatNumberToDatabase($request->parent_id),
-            'slug' => Helper::addSlug($this, 'slug', $request->name),
+            'title' => $request->title,
+            'content' => $request->contents,
+            'slug' => Helper::addSlug($this,'slug', $request->title),
         ];
         $item = Helper::updateByQuery($this, $request, $id, $dataUpdate);
         return $this->findById($item->id);
@@ -125,8 +105,7 @@ class CategoryNew extends Model implements Auditable
         return Helper::deleteManyByIds($this, $request, $forceDelete);
     }
 
-    public function findById($id)
-    {
+    public function findById($id){
         $item = $this->find($id);
         return $item;
     }

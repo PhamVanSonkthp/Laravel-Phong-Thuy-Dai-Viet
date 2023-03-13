@@ -18,6 +18,8 @@
 
                     @include('administrator.components.require_input_text' , ['name' => 'name' , 'label' => 'Tên'])
 
+                    @include('administrator.components.select_category' , ['lable' => 'Tin hiển thị ở App','name' => 'category_type_id' ,'html_category' => \App\Models\NewType::getCategory(isset($item) ? optional($item)->new_type_id : ''), 'isDefaultFirst'=>true])
+
                     @include('administrator.components.input_number' , ['name' => 'index' , 'label' => 'Thứ tự hiển thị (sắp xếp từ nhỏ tới lớn)'])
 
                     <div class="form-group mt-3">

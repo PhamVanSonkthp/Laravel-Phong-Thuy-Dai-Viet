@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCategoryNewsTable extends Migration
+class CreateCategoryNewTypesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,9 @@ class CreateCategoryNewsTable extends Migration
      */
     public function up()
     {
-        Schema::create('category_news', function (Blueprint $table) {
+        Schema::create('category_new_types', function (Blueprint $table) {
             $table->id();
-            $table->text('name');
-            $table->text('slug');
-            $table->bigInteger('parent_id')->default(0);
-            $table->integer('index')->default(0);
-            $table->integer('category_type_id')->default(1);
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -31,6 +27,6 @@ class CreateCategoryNewsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('category_news');
+        Schema::dropIfExists('category_new_types');
     }
 }

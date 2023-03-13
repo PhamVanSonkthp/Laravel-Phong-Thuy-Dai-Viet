@@ -29,7 +29,13 @@ class CategoryNewsController extends Controller
     {
         $results = RestfulAPI::response($this->modelCategoryNew, $request, null, null, null, true);
 
-        $results = $results->orderBy('index', 'DESC')->paginate(Formatter::getLimitRequest(optional($request)->limit))->appends(request()->query());
+        if (isset($request->category_type_id) && $request->category_type_id == 2){
+            $results = $results->where('category_type_id', 2);
+        }else{
+            $results = $results->where('category_type_id', 1);
+        }
+
+        $results = $results->orderBy('index', 'ASC')->paginate(Formatter::getLimitRequest(optional($request)->limit))->appends(request()->query());
 
         return response()->json($results);
     }

@@ -42,7 +42,7 @@ class News extends Model implements Auditable
         $array['short_title'] = Formatter::getShortDescriptionAttribute($this->title);
         $array['short_content'] = Formatter::getShortDescriptionAttribute($this->content, 30);
         $array['category'] = $this->category;
-        $array['image_path_avatar'] = $this->avatar();
+        $array['image_path_avatar'] = $this->avatar("original");
         $array['path_images'] = $this->images;
         return $array;
     }

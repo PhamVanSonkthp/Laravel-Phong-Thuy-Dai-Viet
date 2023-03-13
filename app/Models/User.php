@@ -138,7 +138,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
-            'user_type_id' => $request->user_type_id,
+            'user_type_id' => $request->user_type_id ?? 1,
             'date_of_birth' => $request->date_of_birth,
             'gender_id' => $request->gender_id ?? 1,
             'email_verified_at' => now(),
@@ -163,7 +163,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $dataUpdate = [
             'name' => $request->name,
-            'user_type_id' => $request->user_type_id,
+            'user_type_id' => $request->user_type_id ?? 1,
         ];
 
         if (!empty($request->date_of_birth)){
