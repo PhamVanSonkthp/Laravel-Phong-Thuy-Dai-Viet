@@ -27,18 +27,265 @@ class Product extends Model implements Auditable
 
     // begin
 
-    public function star(){
-        return rand(4,5);
+    public static function search($request)
+    {
+
+
+        $request->search_query = Helper::trimSpace($request->search_query);
+
+        $queries = ['product_visibility_id' => 2];
+        $results = RestfulAPI::response(new Product(), $request, $queries, null, ['price_import'], true);
+
+        if (isset($request->category_id) && !empty($request->category_id)) {
+            $results = $results->where('category_id', $request->category_id);
+        }
+
+        if (isset($request->min_price)) {
+            $results = $results->where(function ($query) use ($request) {
+                $query->where('price_client', '>=', $request->min_price)
+                    ->orWhere('price_agent', '>=', $request->min_price);
+            });
+        }
+
+        if (isset($request->max_price)) {
+            $results = $results->where(function ($query) use ($request) {
+                $query->where('price_client', '<=', $request->max_price)
+                    ->orWhere('price_agent', '<=', $request->max_price);
+            });
+        }
+
+        if (isset($request->empty_inventory) && $request->empty_inventory == 2) {
+            $results = $results->where('inventory', '<=', 0);
+        }
+
+        if (isset($request->empty_inventory) && $request->empty_inventory == 1) {
+            $results = $results->where('inventory', '>', 0);
+        }
+
+        if (isset($request->sort_by_price)) {
+            if ($request->sort_by_price == "asc") {
+                $results = $results->orderBy('price_client', 'asc');
+            } else if ($request->sort_by_price == "desc") {
+                $results = $results->orderBy('price_client', 'DESC');
+            }
+        }
+
+        if (isset($request->is_best) && $request->is_best == 1) {
+            $results = $results->orderBy('sold', 'DESC');
+        } else {
+            $results = $results->latest();
+        }
+
+        if ($results->count() == 0) {
+            $results = Product::whereRaw("MATCH(name) AGAINST(? IN BOOLEAN MODE)", Helper::fullTextWildcards($request->search_query))->where('product_visibility_id', 2);
+
+            if (isset($request->category_id) && !empty($request->category_id)) {
+                $results = $results->where('category_id', $request->category_id);
+            }
+
+            if (isset($request->min_price)) {
+                $results = $results->where(function ($query) use ($request) {
+                    $query->where('price_client', '>=', $request->min_price)
+                        ->orWhere('price_agent', '>=', $request->min_price);
+                });
+            }
+
+            if (isset($request->max_price)) {
+                $results = $results->where(function ($query) use ($request) {
+                    $query->where('price_client', '<=', $request->max_price)
+                        ->orWhere('price_agent', '<=', $request->max_price);
+                });
+            }
+
+            if (isset($request->empty_inventory) && $request->empty_inventory == 2) {
+                $results = $results->where('inventory', '<=', 0);
+            }
+
+            if (isset($request->empty_inventory) && $request->empty_inventory == 1) {
+                $results = $results->where('inventory', '>', 0);
+            }
+
+            if (isset($request->sort_by_price)) {
+                if ($request->sort_by_price == "asc") {
+                    $results = $results->orderBy('price_client', 'asc');
+                } else if ($request->sort_by_price == "desc") {
+                    $results = $results->orderBy('price_client', 'DESC');
+                }
+            }
+
+            if (isset($request->is_best) && $request->is_best == 1) {
+                $results = $results->orderBy('sold', 'DESC');
+            } else {
+                $results = $results->latest();
+            }
+
+            if (isset($request->min_inventory) && strlen($request->min_inventory)) {
+                $results = $results->where('inventory', '>=', $request->min_inventory);
+            }
+
+            if (isset($request->min_inventory) && strlen($request->min_inventory)) {
+                $results = $results->where('inventory', '<=', $request->max_inventory);
+            }
+
+            if ($results->count() != 0) {
+                return $results->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
+            }
+
+            $results = Product::where('product_visibility_id', 2);
+
+            if (isset($request->category_id) && !empty($request->category_id)) {
+                $results = $results->where('category_id', $request->category_id);
+            }
+
+            if (isset($request->min_price)) {
+                $results = $results->where(function ($query) use ($request) {
+                    $query->where('price_client', '>=', $request->min_price)
+                        ->orWhere('price_agent', '>=', $request->min_price);
+                });
+            }
+
+            if (isset($request->max_price)) {
+                $results = $results->where(function ($query) use ($request) {
+                    $query->where('price_client', '<=', $request->max_price)
+                        ->orWhere('price_agent', '<=', $request->max_price);
+                });
+            }
+
+            if (isset($request->empty_inventory) && $request->empty_inventory == 2) {
+                $results = $results->where('inventory', '<=', 0);
+            }
+
+            if (isset($request->empty_inventory) && $request->empty_inventory == 1) {
+                $results = $results->where('inventory', '>', 0);
+            }
+            if (!empty($request->search_query)) {
+                $words = explode(" ", $request->search_query);
+
+                foreach ($words as $word) {
+                    $results = $results->where('name', 'LIKE', "%{$word}%");
+                }
+            }
+
+            if (isset($request->sort_by_price)) {
+                if ($request->sort_by_price == "asc") {
+                    $results = $results->orderBy('price_client', 'asc');
+                } else if ($request->sort_by_price == "desc") {
+                    $results = $results->orderBy('price_client', 'DESC');
+                }
+            }
+
+            if (isset($request->is_best) && $request->is_best == 1) {
+                $results = $results->orderBy('sold', 'DESC');
+            } else {
+                $results = $results->latest();
+            }
+
+            if (isset($request->min_inventory) && strlen($request->min_inventory)) {
+                $results = $results->where('inventory', '>=', $request->min_inventory);
+            }
+
+            if (isset($request->min_inventory) && strlen($request->min_inventory)) {
+                $results = $results->where('inventory', '<=', $request->max_inventory);
+            }
+
+            if ($results->count() != 0) {
+                $results = $results->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
+                return $results;
+            }
+
+
+            $results = Product::where('product_visibility_id', 2);
+
+            if (isset($request->category_id) && !empty($request->category_id)) {
+                $results = $results->where('category_id', $request->category_id);
+            }
+
+            if (isset($request->min_price)) {
+                $results = $results->where(function ($query) use ($request) {
+                    $query->where('price_client', '>=', $request->min_price)
+                        ->orWhere('price_agent', '>=', $request->min_price);
+                });
+            }
+
+            if (isset($request->max_price)) {
+                $results = $results->where(function ($query) use ($request) {
+                    $query->where('price_client', '<=', $request->max_price)
+                        ->orWhere('price_agent', '<=', $request->max_price);
+                });
+            }
+
+            if (isset($request->empty_inventory) && $request->empty_inventory == 2) {
+                $results = $results->where('inventory', '<=', 0);
+            }
+
+            if (isset($request->empty_inventory) && $request->empty_inventory == 1) {
+                $results = $results->where('inventory', '>', 0);
+            }
+
+            if (!empty($request->search_query)) {
+                $words = explode(" ", $request->search_query);
+
+                $results = $results->where(function ($results) use ($words) {
+                    foreach ($words as $word) {
+                        $results = $results->orWhere('name', 'LIKE', "%{$word}%");
+                    }
+                });
+            }
+
+            if (isset($request->sort_by_price)) {
+                if ($request->sort_by_price == "asc") {
+                    $results = $results->orderBy('price_client', 'asc');
+                } else if ($request->sort_by_price == "desc") {
+                    $results = $results->orderBy('price_client', 'DESC');
+                }
+            }
+
+            if (isset($request->is_best) && $request->is_best == 1) {
+                $results = $results->orderBy('sold', 'DESC');
+            } else {
+                $results = $results->latest();
+            }
+
+            if (isset($request->min_inventory) && strlen($request->min_inventory)) {
+                $results = $results->where('inventory', '>=', $request->min_inventory);
+            }
+
+            if (isset($request->min_inventory) && strlen($request->min_inventory)) {
+                $results = $results->where('inventory', '<=', $request->max_inventory);
+            }
+
+            $results = $results->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
+
+            return $results;
+
+        }
+
+        if (isset($request->min_inventory) && strlen($request->min_inventory)) {
+            $results = $results->where('inventory', '>=', $request->min_inventory);
+        }
+
+        if (isset($request->min_inventory) && strlen($request->min_inventory)) {
+            $results = $results->where('inventory', '<=', $request->max_inventory);
+        }
+
+        $results = $results->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
+
+        return $results;
+    }
+
+    public function star()
+    {
+        return rand(4, 5);
     }
 
     public function toArray()
     {
         $array = parent::toArray();
-        $array['description'] = str_replace("<img src=\"/","<img src=\"" . env('APP_URL') . "/",$array['description']);
+        $array['description'] = str_replace("<img src=\"/", "<img src=\"" . env('APP_URL') . "/", $array['description']);
 
         $array['image_path_avatar'] = $this->avatar();
         $array['path_images'] = $this->images;
-        if (count($array['path_images']) == 0){
+        if (count($array['path_images']) == 0) {
             $array['path_images'][] = [
                 'id' => 0,
                 'uuid' => "none",
@@ -56,24 +303,24 @@ class Product extends Model implements Auditable
         $array['category'] = $this->category;
         $array['price'] = $this->priceSale();
         $array['price_up_sale'] = $this->priceUpSale();
-        $array['is_flash_sale'] = rand(0,1) == 1;
+        $array['is_flash_sale'] = rand(0, 1) == 1;
         $array['price_by_user'] = $this->priceByUser();
 
-        if ((auth('sanctum')->check() || auth()->check()) && (optional(auth('sanctum')->user())->is_admin != 0 || optional(auth()->user())->is_admin != 0)){
+        if ((auth('sanctum')->check() || auth()->check()) && (optional(auth('sanctum')->user())->is_admin != 0 || optional(auth()->user())->is_admin != 0)) {
             // is admin user
-        }else{
+        } else {
             unset($array['price_import']);
-            if (auth('sanctum')->check()){
+            if (auth('sanctum')->check()) {
                 $user_type_id = optional(auth('sanctum')->user())->user_type_id;
-                if ($user_type_id == 2){
+                if ($user_type_id == 2) {
                     unset($array['price_partner']);
-                }else if ($user_type_id == 3){
+                } else if ($user_type_id == 3) {
                     unset($array['price_agent']);
-                }else{
+                } else {
                     unset($array['price_agent']);
                     unset($array['price_partner']);
                 }
-            }else{
+            } else {
                 unset($array['price_agent']);
                 unset($array['price_partner']);
             }
@@ -82,20 +329,24 @@ class Product extends Model implements Auditable
         return $array;
     }
 
-    public function productsAttributes(){
-        return $this->hasMany(Product::class,'group_product_id','group_product_id');
+    public function productsAttributes()
+    {
+        return $this->hasMany(Product::class, 'group_product_id', 'group_product_id');
     }
 
-    public function isEmptyInventory(){
+    public function isEmptyInventory()
+    {
         return $this->inventory <= 0;
     }
 
-    public function priceByUser(){
-        if (auth('sanctum')->check()){
+    public function priceByUser()
+    {
+        if (auth('sanctum')->check()) {
             $user_type_id = optional(auth('sanctum')->user())->user_type_id;
-            if ($user_type_id == 3){
+            if ($user_type_id == 3) {
                 return $this->price_partner;
-            }if ($user_type_id == 2){
+            }
+            if ($user_type_id == 2) {
                 return $this->price_agent;
             }
         }
@@ -103,7 +354,8 @@ class Product extends Model implements Auditable
         return $this->price_client;
     }
 
-    public function priceSale(){
+    public function priceSale()
+    {
 
         $productsAttributes = $this->productsAttributes;
 
@@ -115,51 +367,52 @@ class Product extends Model implements Auditable
         $resultAgent = 0;
         $resultClient = 0;
 
-        foreach ($productsAttributes as $item){
+        foreach ($productsAttributes as $item) {
             if ($item->price_client <= $priceMinClient) $priceMinClient = $item->price_client;
             if ($item->price_client >= $priceMaxClient) $priceMaxClient = $item->price_client;
 
 
-            if (auth('sanctum')->check()){
+            if (auth('sanctum')->check()) {
 
-                if (auth('sanctum')->user()->user_type_id == 2){
+                if (auth('sanctum')->user()->user_type_id == 2) {
                     if ($item->price_agent <= $priceMinAgent) $priceMinAgent = $item->price_agent;
                     if ($item->price_agent >= $priceMaxAgent) $priceMaxAgent = $item->price_agent;
-                }elseif (auth('sanctum')->user()->user_type_id == 3){
+                } elseif (auth('sanctum')->user()->user_type_id == 3) {
                     if ($item->price_partner <= $priceMinAgent) $priceMinAgent = $item->price_partner;
                     if ($item->price_partner >= $priceMaxAgent) $priceMaxAgent = $item->price_partner;
                 }
-            }else{
+            } else {
                 if ($item->price_agent <= $priceMinAgent) $priceMinAgent = $item->price_agent;
                 if ($item->price_agent >= $priceMaxAgent) $priceMaxAgent = $item->price_agent;
             }
 
         }
 
-        if (!empty($priceMinAgent) || !empty($priceMaxAgent)){
-            if ($priceMinAgent != $priceMaxAgent){
+        if (!empty($priceMinAgent) || !empty($priceMaxAgent)) {
+            if ($priceMinAgent != $priceMaxAgent) {
                 $resultAgent = Formatter::convertNumberToMoney($priceMinAgent) . " ~ " . Formatter::convertNumberToMoney($priceMaxAgent);
-            }else{
+            } else {
                 $resultAgent = Formatter::convertNumberToMoney($priceMinAgent);
             }
         }
 
-        if (!empty($priceMinClient) || !empty($priceMaxClient)){
-            if ($priceMinClient != $priceMaxClient){
+        if (!empty($priceMinClient) || !empty($priceMaxClient)) {
+            if ($priceMinClient != $priceMaxClient) {
                 $resultClient = Formatter::convertNumberToMoney($priceMinClient) . " ~ " . Formatter::convertNumberToMoney($priceMaxClient);
-            }else{
+            } else {
                 $resultClient = Formatter::convertNumberToMoney($priceMinClient);
             }
         }
 
-        if (auth('sanctum')->check() && auth('sanctum')->user()->user_type_id != 1){
+        if (auth('sanctum')->check() && auth('sanctum')->user()->user_type_id != 1) {
             return $resultAgent . "";
         } else {
             return $resultClient . "";
         }
     }
 
-    public function priceUpSale(){
+    public function priceUpSale()
+    {
 
         $percent = 0.25;
 
@@ -173,7 +426,7 @@ class Product extends Model implements Auditable
         $resultAgent = 0;
         $resultClient = 0;
 
-        foreach ($productsAttributes as $item){
+        foreach ($productsAttributes as $item) {
             if ($item->price_client <= $priceMinClient) $priceMinClient = $item->price_client;
             if ($item->price_client >= $priceMaxClient) $priceMaxClient = $item->price_client;
             if ($item->price_agent <= $priceMinAgent) $priceMinAgent = $item->price_agent;
@@ -182,23 +435,23 @@ class Product extends Model implements Auditable
         if ($priceMinClient == PHP_INT_MIN) $priceMinClient = 0;
         if ($priceMaxClient == PHP_INT_MAX) $priceMaxClient = 0;
 
-        if (!empty($priceMinAgent) || !empty($priceMaxAgent)){
-            if ($priceMinAgent != $priceMaxAgent){
+        if (!empty($priceMinAgent) || !empty($priceMaxAgent)) {
+            if ($priceMinAgent != $priceMaxAgent) {
                 $resultAgent = Formatter::convertNumberToMoney(round($priceMinAgent + $priceMinAgent * $percent)) . " ~ " . Formatter::convertNumberToMoney(round($priceMaxAgent + $priceMaxAgent * $percent));
-            }else{
+            } else {
                 $resultAgent = Formatter::convertNumberToMoney(round($priceMinAgent + $priceMinAgent * $percent));
             }
         }
 
-        if (!empty($priceMinClient) || !empty($priceMaxClient)){
-            if ($priceMinClient != $priceMaxClient){
+        if (!empty($priceMinClient) || !empty($priceMaxClient)) {
+            if ($priceMinClient != $priceMaxClient) {
                 $resultClient = Formatter::convertNumberToMoney(round($priceMinClient + $priceMinClient * $percent)) . " ~ " . Formatter::convertNumberToMoney(round($priceMaxClient + $priceMaxClient * $percent));
-            }else{
+            } else {
                 $resultClient = Formatter::convertNumberToMoney(round($priceMinClient + $priceMinClient * $percent));
             }
         }
 
-        if (auth('sanctum')->check() && auth('sanctum')->user()->user_type_id == 2){
+        if (auth('sanctum')->check() && auth('sanctum')->user()->user_type_id == 2) {
             return $resultAgent . "";
         } else {
             return $resultClient . "";
@@ -211,7 +464,7 @@ class Product extends Model implements Auditable
 
         $results = [];
 
-        foreach ($products as $item){
+        foreach ($products as $item) {
             $temp = [];
             $temp['id'] = $item->id;
             $temp['size'] = $item->size;
@@ -226,9 +479,10 @@ class Product extends Model implements Auditable
         return $results;
     }
 
-    public function getInventoryByAttributes($input){
-        foreach ($this->attributes() as $attribute){
-            if ($attribute['size'] == $input){
+    public function getInventoryByAttributes($input)
+    {
+        foreach ($this->attributes() as $attribute) {
+            if ($attribute['size'] == $input) {
                 return $attribute['inventory'];
             }
         }
@@ -236,7 +490,8 @@ class Product extends Model implements Auditable
         return 0;
     }
 
-    public function isProductVariation(){
+    public function isProductVariation()
+    {
         return !empty($this->attributesJson()) && is_array($this->attributesJson()) && count($this->attributesJson()) > 0;
     }
 
@@ -250,7 +505,7 @@ class Product extends Model implements Auditable
         $resultsSizeFiltered = [];
         $resultsColorFiltered = [];
 
-        foreach ($products as $item){
+        foreach ($products as $item) {
             $tempSize = $item->size;
             $tempColor = $item->color;
 
@@ -263,60 +518,62 @@ class Product extends Model implements Auditable
 
         $attributes = $this->attributes();
 
-        foreach ($resultsSize as $resultsSizeItem){
+        foreach ($resultsSize as $resultsSizeItem) {
 
             $isBelong = false;
 
-            foreach ($attributes as $attributeItem){
-                if ($resultsSizeItem == $attributeItem['size'] && !in_array($resultsSizeItem, $resultsSizeFiltered)){
+            foreach ($attributes as $attributeItem) {
+                if ($resultsSizeItem == $attributeItem['size'] && !in_array($resultsSizeItem, $resultsSizeFiltered)) {
                     $isBelong = true;
                     break;
                 }
             }
-            if ($isBelong){
+            if ($isBelong) {
                 $resultsSizeFiltered[] = $resultsSizeItem;
             }
         }
 
-        foreach ($resultsColor as $resultsColorItem){
+        foreach ($resultsColor as $resultsColorItem) {
 
             $isBelong = false;
 
-            foreach ($attributes as $attributeItem){
-                if ($resultsColorItem == $attributeItem['color'] && !in_array($resultsColorItem, $resultsColorFiltered)){
+            foreach ($attributes as $attributeItem) {
+                if ($resultsColorItem == $attributeItem['color'] && !in_array($resultsColorItem, $resultsColorFiltered)) {
                     $isBelong = true;
                     break;
                 }
             }
-            if ($isBelong){
+            if ($isBelong) {
                 $resultsColorFiltered[] = $resultsColorItem;
             }
         }
 
         $result = [];
 
-        if (!empty($resultsSizeFiltered) && count($resultsSizeFiltered) > 0){
+        if (!empty($resultsSizeFiltered) && count($resultsSizeFiltered) > 0) {
             $result['sizes'] = $resultsSizeFiltered;
         }
 
-        if (!empty($resultsColorFiltered) && count($resultsColorFiltered) > 0){
+        if (!empty($resultsColorFiltered) && count($resultsColorFiltered) > 0) {
             $result['colors'] = $resultsColorFiltered;
         }
 
         return $result;
     }
 
-    public function category(){
+    public function category()
+    {
         return $this->belongsTo(Category::class);
     }
 
-    function firstOrCreateCategory($category_id){
-        if (!empty($category_id) && !is_numeric($category_id)){
+    function firstOrCreateCategory($category_id)
+    {
+        if (!empty($category_id) && !is_numeric($category_id)) {
             $category = Category::firstOrCreate([
                 'name' => $category_id,
-            ],[
+            ], [
                 'name' => $category_id,
-                'slug' => Helper::addSlug($this,'slug', $category_id),
+                'slug' => Helper::addSlug($this, 'slug', $category_id),
             ]);
 
             return $category->id;
@@ -347,8 +604,9 @@ class Product extends Model implements Auditable
         return Helper::images($this);
     }
 
-    public function createdBy(){
-        return $this->hasOne(User::class,'id','created_by_id');
+    public function createdBy()
+    {
+        return $this->hasOne(User::class, 'id', 'created_by_id');
     }
 
     public function searchByQuery($request, $queries = [], $randomRecord = null, $makeHiddens = null, $isCustom = false)
@@ -363,25 +621,25 @@ class Product extends Model implements Auditable
 
         $productLatest = Product::latest()->first();
 
-        if (!empty($productLatest)){
-            $group_product_id = $productLatest->id +1;
+        if (!empty($productLatest)) {
+            $group_product_id = $productLatest->id + 1;
         }
 
         $product_visibility_id = 2;
 
-        if (isset($request->_headers) && isset($request->_attributes) && !empty($request->_headers) && !empty($request->_attributes)){
+        if (isset($request->_headers) && isset($request->_attributes) && !empty($request->_headers) && !empty($request->_attributes)) {
             $_headers = json_decode($request->_headers);
             $_attributes = json_decode($request->_attributes);
 
-            if (count($_headers) == 1){
+            if (count($_headers) == 1) {
 
-                for ($i = 0 ; $i < count($_attributes[0]);$i++){
+                for ($i = 0; $i < count($_attributes[0]); $i++) {
 
                     $dataInsert = [
                         'name' => $request->name,
                         'short_description' => $request->short_description,
                         'description' => $request->description,
-                        'slug' => Helper::addSlug($this,'slug', $request->name),
+                        'slug' => Helper::addSlug($this, 'slug', $request->name),
                         'price_import' => Formatter::formatMoneyToDatabase($request->import_prices[$i]),
                         'price_client' => Formatter::formatMoneyToDatabase($request->client_prices[$i]),
                         'price_agent' => Formatter::formatMoneyToDatabase($request->agent_prices[$i]),
@@ -402,18 +660,18 @@ class Product extends Model implements Auditable
 
                     $item->fill($attr)->save();
                 }
-            }else{
+            } else {
 
                 $pointer = 0;
 
-                for ($i = 0 ; $i < count($_attributes[0]);$i++){
+                for ($i = 0; $i < count($_attributes[0]); $i++) {
 
-                    for ($j = 0 ; $j < count($_attributes[1]);$j++){
+                    for ($j = 0; $j < count($_attributes[1]); $j++) {
                         $dataInsert = [
                             'name' => $request->name,
                             'short_description' => $request->short_description,
                             'description' => $request->description,
-                            'slug' => Helper::addSlug($this,'slug', $request->name),
+                            'slug' => Helper::addSlug($this, 'slug', $request->name),
                             'price_import' => Formatter::formatMoneyToDatabase($request->import_prices[$pointer]),
                             'price_client' => Formatter::formatMoneyToDatabase($request->client_prices[$pointer]),
                             'price_agent' => Formatter::formatMoneyToDatabase($request->agent_prices[$pointer]),
@@ -442,12 +700,12 @@ class Product extends Model implements Auditable
 
             }
 
-        }else{
+        } else {
             $dataInsert = [
                 'name' => $request->name,
                 'short_description' => $request->short_description,
                 'description' => $request->description,
-                'slug' => Helper::addSlug($this,'slug', $request->name),
+                'slug' => Helper::addSlug($this, 'slug', $request->name),
                 'price_import' => Formatter::formatMoneyToDatabase($request->price_import),
                 'price_client' => Formatter::formatMoneyToDatabase($request->price_client),
                 'price_agent' => Formatter::formatMoneyToDatabase($request->price_agent),
@@ -473,7 +731,7 @@ class Product extends Model implements Auditable
             'name' => $request->name,
             'short_description' => $request->short_description,
             'description' => $request->description,
-            'slug' => Helper::addSlug($this,'slug', $request->title),
+            'slug' => Helper::addSlug($this, 'slug', $request->title),
             'price_import' => Formatter::formatMoneyToDatabase($request->price_import),
             'price_client' => Formatter::formatMoneyToDatabase($request->price_client),
             'price_agent' => Formatter::formatMoneyToDatabase($request->price_agent),
@@ -496,7 +754,8 @@ class Product extends Model implements Auditable
         return Helper::deleteManyByIds($this, $request, $forceDelete);
     }
 
-    public function findById($id){
+    public function findById($id)
+    {
         $item = $this->find($id);
         return $item;
     }
