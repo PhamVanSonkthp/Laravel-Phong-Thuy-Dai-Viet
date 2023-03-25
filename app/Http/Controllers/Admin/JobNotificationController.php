@@ -56,8 +56,6 @@ class JobNotificationController extends Controller
             'notiable' => 'bool',
         ]);
 
-//        $item = $this->model->storeByQuery($request);
-
 
         $item = JobNotification::create([
             'title' => $request->title,
@@ -65,6 +63,7 @@ class JobNotificationController extends Controller
             'time' => $request->time,
             'repeat' => $request->repeat,
             'notiable' => $request->notiable,
+            'app_id' => $request->app_id,
         ]);
 
         if (is_array($request->days_of_week)){
@@ -125,6 +124,9 @@ class JobNotificationController extends Controller
         }
         if ($request->has('description')){
             $dataUpdate['description'] = $request->description;
+        }
+        if ($request->has('app_id')){
+            $dataUpdate['app_id'] = $request->app_id;
         }
 
         $item->update($dataUpdate);

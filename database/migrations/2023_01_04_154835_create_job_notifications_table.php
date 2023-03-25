@@ -20,6 +20,7 @@ class CreateJobNotificationsTable extends Migration
             $table->time('time');
             $table->boolean('notiable')->default(true);
             $table->boolean('repeat')->default(false);
+            $table->boolean('app_id')->default(false);
             $table->timestamps();
         });
     }

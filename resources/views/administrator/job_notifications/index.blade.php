@@ -135,6 +135,16 @@
                                         @endforeach
                                     </select>
                                 </div>
+
+                                <div class="mt-3">
+                                    <label>Chọn App</label>
+                                    <select id="select_app_id" class="form-control select2_init">
+                                        <option value="0">Tất cả app</option>
+                                        <option value="1">App Ngày Tốt</option>
+                                        <option value="2">App Bán Hàng</option>
+                                    </select>
+                                </div>
+
                             </div>
 
                             <div class="col-md-3">
@@ -211,6 +221,16 @@
                                         @endforeach
                                     </select>
                                 </div>
+
+                                <div class="mt-3">
+                                    <label>Chọn App</label>
+                                    <select id="select_app_id_edit" class="form-control select2_init">
+                                        <option value="0">Tất cả app</option>
+                                        <option value="1">App Ngày Tốt</option>
+                                        <option value="2">App Bán Hàng</option>
+                                    </select>
+                                </div>
+
                             </div>
 
                             <div class="col-md-3">
@@ -285,6 +305,7 @@
                         title: $("#input_title").val(),
                         description: $("#input_description").val(),
                         user_id: $("#select_user_id").val(),
+                        app_id: $("#select_app_idt").val(),
                         time: $("#input_time").val(),
                         repeat: isCheckedInput("input_repeat") ? 1 : 0,
                         notiable: isCheckedInput("input_notiable") ? 1 : 0,
@@ -358,6 +379,7 @@
                         title: $("#input_title_edit").val(),
                         description: $("#input_description_edit").val(),
                         user_id: $("#select_user_id_edit").val(),
+                        app_id: $("#select_app_id_edit").val(),
                         time: $("#input_time_edit").val(),
                         repeat: isCheckedInput("input_repeat_edit") ? 1 : 0,
                         notiable: isCheckedInput("input_notiable_edit") ? 1 : 0,
@@ -436,6 +458,8 @@
                     $('#input_title_edit').val(response.title)
                     $('#input_description_edit').val(response.description)
                     $('#select_user_id_edit').val(users).trigger('change');
+                    $('#select_app_id_edit').val(response.app_id).trigger('change');
+
                     $('#input_time_edit').val(response.time)
 
                     if (response.repeat) {

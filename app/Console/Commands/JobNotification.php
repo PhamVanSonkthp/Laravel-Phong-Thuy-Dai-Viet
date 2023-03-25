@@ -71,6 +71,7 @@ class JobNotification extends Command
                             $sendAll[] = [
                                 'title' => $item->title,
                                 'description' => $item->description,
+                                'app_id' => $item->app_id,
                             ];
 
                             $scheduleRepeatItem->update([
@@ -103,7 +104,14 @@ class JobNotification extends Command
         }
 
         foreach ($sendAll as $item) {
-            Helper::sendNotificationToTopic(env('FIREBASE_TOPIC_ALL_N1','app'), $item['title'], $item['description']);
+            if ($item['app_id'] == 0){
+                Helper::sendNotificationToTopic(env('FIREBASE_TOPIC_ALL_N1','app'), $item['title'], $item['description']);
+            }else if ($item['app_id'] == 1){
+                Helper::sendNotificationToTopic(env('FIREBASE_TOPIC_ALL_N2','app'), $item['title'], $item['description']);
+            }else if ($item['app_id'] == 2){
+                Helper::sendNotificationToTopic(env('FIREBASE_TOPIC_ALL_N3','app'), $item['title'], $item['description']);
+            }
+
         }
 
     }
