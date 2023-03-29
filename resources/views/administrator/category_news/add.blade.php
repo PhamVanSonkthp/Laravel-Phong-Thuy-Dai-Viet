@@ -18,6 +18,20 @@
 
                     @include('administrator.components.require_input_text' , ['name' => 'name' , 'label' => 'Tên'])
 
+{{--                    <div class="form-group mt-3">--}}
+{{--                        <label>Tin hiển thị ở App</label>--}}
+{{--                        <select class="form-control select2_init @error('category_type_id') is-invalid @enderror"--}}
+{{--                                name="category_type_id">--}}
+{{--                            <option value="0">Tất cả app</option>--}}
+{{--                            @foreach(\App\Models\NewType::all() as $itemNewType)--}}
+{{--                                <option value="{{$itemNewType->id}}">{{$itemNewType->name}}</option>--}}
+{{--                            @endforeach--}}
+{{--                        </select>--}}
+{{--                        @error('category_type_id')--}}
+{{--                        <div class="alert alert-danger">{{$message}}</div>--}}
+{{--                        @enderror--}}
+{{--                    </div>--}}
+
                     @include('administrator.components.select_category' , ['lable' => 'Tin hiển thị ở App','name' => 'category_type_id' ,'html_category' => \App\Models\NewType::getCategory(isset($item) ? optional($item)->new_type_id : ''), 'isDefaultFirst'=>true])
 
                     @include('administrator.components.input_number' , ['name' => 'index' , 'label' => 'Thứ tự hiển thị (sắp xếp từ nhỏ tới lớn)'])

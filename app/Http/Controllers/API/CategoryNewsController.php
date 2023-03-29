@@ -27,15 +27,25 @@ class CategoryNewsController extends Controller
 
     public function list(Request $request)
     {
-        $results = RestfulAPI::response($this->modelCategoryNew, $request, null, null, null, true);
+        $category_type_id = $request->category_type_id;
 
+        $request->merge(['category_type_id' => null]);
+
+        $results = RestfulAPI::response($this->modelCategoryNew, $request, null, null, null, true);
+        $request->merge(['category_type_id' => $category_type_id]);
         if (isset($request->category_type_id) && $request->category_type_id == 2){
-            $results = $results->where('category_type_id', 2);
+            $results = $results->where(function ($query) {
+                $query->orWhere('category_type_id', 2)
+                    ->orWhere('category_type_id', 3);
+            });
         }else{
-            $results = $results->where('category_type_id', 1);
+            $results = $results->where(function ($query) {
+                $query->where('category_type_id', 1)
+                    ->orWhere('category_type_id', 3);
+            });
         }
 
-        $results = $results->orderBy('index', 'ASC')->paginate(Formatter::getLimitRequest(optional($request)->limit))->appends(request()->query());
+        $results = $results->orderBy('index', 'DESC')->paginate(Formatter::getLimitRequest(optional($request)->limit))->appends(request()->query());
 
         return response()->json($results);
     }

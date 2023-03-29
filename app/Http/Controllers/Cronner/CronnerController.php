@@ -45,16 +45,15 @@ class CronnerController extends Controller
         $nowTime = $currentHour . ':' . date('i') . ":00";
 
         $nowTime = Carbon::parse($nowTime);
-        $nowTime = $nowTime->addHours(5);
-        $nowTime = $nowTime->addMinutes(30);
+//        $nowTime = $nowTime->addHours(5);
+//        $nowTime = $nowTime->addMinutes(30);
 
-
-        if ($nowTime->toTimeString() == "09:00:00"){
-            $item = SunCalendar::whereDate('date', Carbon::today())->first();
+        if (false && $nowTime->toTimeString() == "09:00:00"){
+            $item = SunCalendar::whereDate('date', date('Y-m-d',strtotime($nowTime)))->first();
             if (!empty($item)) {
                 $item = Calendar::find($item->calendar_id);
                 if (!empty($item)){
-                    Helper::sendNotificationToTopic("Thời tiết: ". env('FIREBASE_TOPIC_ALL_N1','app'), $item->weather, trim(optional($item->quotation)->description));
+                    Helper::sendNotificationToTopic(env('FIREBASE_TOPIC_ALL_N1','app'), "Thời tiết: ". $item->weather, trim(optional($item->quotation)->description));
                 }
             }
         }
@@ -74,6 +73,7 @@ class CronnerController extends Controller
                             $sendAll[] = [
                                 'title' => $item->title,
                                 'description' => $item->description,
+                                'app_id' => $item->app_id,
                             ];
 
                             $scheduleRepeatItem->update([
@@ -106,7 +106,14 @@ class CronnerController extends Controller
         }
 
         foreach ($sendAll as $item) {
-            Helper::sendNotificationToTopic(env('FIREBASE_TOPIC_ALL_N1','app'), $item['title'], $item['description']);
+            if ($item['app_id'] == 0){
+                Helper::sendNotificationToTopic(env('FIREBASE_TOPIC_ALL_N1','app'), $item['title'], $item['description']);
+            }else if ($item['app_id'] == 1){
+                Helper::sendNotificationToTopic(env('FIREBASE_TOPIC_ALL_N2','app'), $item['title'], $item['description']);
+            }else if ($item['app_id'] == 2){
+                Helper::sendNotificationToTopic(env('FIREBASE_TOPIC_ALL_N3','app'), $item['title'], $item['description']);
+            }
+
         }
 
         return response()->json([

@@ -104,6 +104,11 @@ return [
         'vouchers-edit' => 'vouchers_edit',
         'vouchers-delete' => 'vouchers_delete',
 
+        'products-list' => 'products_list',
+        'products-add' => 'products_add',
+        'products-edit' => 'products_edit',
+        'products-delete' => 'products_delete',
+
     ],
     'table_module'=>[
         'dashboard',
@@ -126,6 +131,7 @@ return [
         'calendars',
         'orders',
         'vouchers',
+        'products',
     ],
 
     'table_module_name'=>[
@@ -149,6 +155,7 @@ return [
         'Quản lý lịch',
         'Quản lý đơn hàng',
         'Quản lý mã giảm giá',
+        'Quản lý sản phẩm',
     ],
 
     'module_children'=>[

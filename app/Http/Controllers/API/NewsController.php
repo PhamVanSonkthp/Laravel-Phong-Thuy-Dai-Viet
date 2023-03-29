@@ -26,6 +26,9 @@ class NewsController extends Controller
 
     public function list(Request $request)
     {
+
+        $request->merge(['new_type_id' => null]);
+
         $results = RestfulAPI::response($this->modelNew, $request);
 
         foreach ($results as $item){

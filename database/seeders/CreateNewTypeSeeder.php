@@ -21,5 +21,9 @@ class CreateNewTypeSeeder extends Seeder
         NewType::firstOrCreate([
             "name" => "App bán hàng",
         ]);
+
+        NewType::firstOrCreate([
+            "name" => "Tất cả app",
+        ]);
     }
 }

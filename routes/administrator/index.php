@@ -38,7 +38,6 @@ Route::prefix('administrator')->group(function () {
         Route::get('/', [
             'as' => 'administrator.dashboard.index',
             'uses' => 'App\Http\Controllers\Admin\DashboardController@index',
-            'middleware' => 'can:dashboard-list',
         ]);
 
     });

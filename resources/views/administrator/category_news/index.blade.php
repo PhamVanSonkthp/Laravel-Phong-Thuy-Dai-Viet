@@ -50,7 +50,7 @@
                                             <img class="rounded-circle" src="{{$item->avatar()}}" alt="">
                                         </td>
                                         <td>{{$item->index}}</td>
-                                        <td>{{ optional($item->categoryNewType)->name}}</td>
+                                        <td>{{ optional($item->categoryNewType)->name ?? 'Tất cả App'}}</td>
                                         <td>{{\App\Models\Formatter::getDateTime($item->created_at)}}</td>
                                         <td>
                                             <a href="{{route('administrator.'.$prefixView.'.edit' , ['id'=> $item->id ])}}"
