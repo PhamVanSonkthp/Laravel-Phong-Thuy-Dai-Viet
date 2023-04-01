@@ -32,6 +32,7 @@
                                     <th>Tên</th>
                                     <th>Hình ảnh</th>
                                     <th>Danh mục</th>
+                                    <th>Xu hướng?</th>
                                     <th width="50%">
                                         <div class="row">
                                             <div class="col-4">
@@ -67,6 +68,9 @@
                                         </td>
                                         <td>
                                             {{optional($item->category)->name}}
+                                        </td>
+                                        <td>
+                                            <input class="input-product-is-feature" type="checkbox" {{$item->is_feature ? 'checked' : ''}} value="{{$item->id}}">
                                         </td>
                                         <td>
                                             @if($item->isProductVariation())
@@ -167,6 +171,27 @@
                 false,
             )
         }
+
+        $('.input-product-is-feature').change(function() {
+
+            callAjax(
+                "PUT",
+                "{{route('ajax.administrator.products.update')}}",
+                {
+                    id: $(this).val(),
+                    'is_feature': this.checked ? 1 : 0,
+                },
+                (response) => {
+                    console.log(response)
+                },
+                (error) => {
+
+                },
+                false,
+            )
+        });
+
+
     </script>
 @endsection
 

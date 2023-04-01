@@ -87,6 +87,9 @@ class ProductController extends Controller
             if (isset($request->price_partner) && $request->price_partner != ""){
                 $dataUpdate['price_partner'] = Formatter::formatNumberToDatabase($request->price_partner);
             }
+            if (isset($request->is_feature) && $request->is_feature != ""){
+                $dataUpdate['is_feature'] = Formatter::formatNumberToDatabase($request->is_feature);
+            }
 
             $item->update($dataUpdate);
         }

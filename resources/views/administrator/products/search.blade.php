@@ -19,7 +19,7 @@
                     <label>Kho hàng</label>
                 </div>
 
-                <div class="col-4">
+                <div class="col-3">
                     @include('administrator.components.input_number' , ['name' => 'min_inventory' , 'label' => 'Tối thiểu'])
                 </div>
                 <div class="col-1">
@@ -28,9 +28,19 @@
                     </div>
                 </div>
 
-                <div class="col-4">
+                <div class="col-3">
                     @include('administrator.components.input_number' , ['name' => 'max_inventory' , 'label' => 'Tối đa'])
                 </div>
+
+                <div class="col-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="check_box_feature" name="check_box_feature" {{request('is_feature') ? 'checked' : ''}}>
+                        <label class="form-check-label" for="check_box_feature">
+                            Sản phẩm xu hướng
+                        </label>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -54,6 +64,7 @@
             {name: "to", value: input_query_to},
             {name: "min_inventory", value: $('input[name="min_inventory"]').val()},
             {name: "max_inventory", value: $('input[name="max_inventory"]').val()},
+            {name: "is_feature", value: $('input[name="check_box_feature"]').is(":checked") ? '1' : ''},
         ])
     }
 

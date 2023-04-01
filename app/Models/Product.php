@@ -70,6 +70,10 @@ class Product extends Model implements Auditable
             }
         }
 
+        if (!empty($request->is_feature)) {
+            $results = $results->where('is_feature', $request->is_feature);
+        }
+
         if (isset($request->is_best) && $request->is_best == 1) {
             $results = $results->orderBy('sold', 'DESC');
         } else {
@@ -111,6 +115,10 @@ class Product extends Model implements Auditable
                 } else if ($request->sort_by_price == "desc") {
                     $results = $results->orderBy('price_client', 'DESC');
                 }
+            }
+
+            if (!empty($request->is_feature)) {
+                $results = $results->where('is_feature', $request->is_feature);
             }
 
             if (isset($request->is_best) && $request->is_best == 1) {
@@ -172,6 +180,10 @@ class Product extends Model implements Auditable
                 } else if ($request->sort_by_price == "desc") {
                     $results = $results->orderBy('price_client', 'DESC');
                 }
+            }
+
+            if (!empty($request->is_feature)) {
+                $results = $results->where('is_feature', $request->is_feature);
             }
 
             if (isset($request->is_best) && $request->is_best == 1) {
@@ -238,6 +250,10 @@ class Product extends Model implements Auditable
                 } else if ($request->sort_by_price == "desc") {
                     $results = $results->orderBy('price_client', 'DESC');
                 }
+            }
+
+            if (!empty($request->is_feature)) {
+                $results = $results->where('is_feature', $request->is_feature);
             }
 
             if (isset($request->is_best) && $request->is_best == 1) {
@@ -740,6 +756,7 @@ class Product extends Model implements Auditable
             'category_id' => $this->firstOrCreateCategory($request->category_id),
             'inventory' => Formatter::formatNumberToDatabase($request->inventory),
             'sku' => $request->sku,
+            'is_feature' => $request->is_feature ?? 0,
         ];
         $item = Helper::updateByQuery($this, $request, $id, $dataUpdate);
         return $this->findById($item->id);

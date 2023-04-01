@@ -117,7 +117,7 @@ Route::prefix('ajax/administrator')->group(function () {
             Route::put('/update', [
                 'as' => 'ajax.administrator.products.update',
                 'uses' => 'App\Http\Controllers\Ajax\ProductController@update',
-                'middleware' => 'can:orders-edit',
+                'middleware' => 'can:products-edit',
             ]);
         });
     });
