@@ -152,8 +152,10 @@ class OrderController extends Controller
 
             $productsHtml = '<div style="margin-top: 5px;display: flex;gap: 10px;"><div style="flex: 1;"><img style="height: 40px;" src="' . $productItem->product_image . '"></div><div style="flex: 5;"><div>' . $productItem->name . '</div>' . $productAttributeHtml . '</div></div>';
 
-            $table .= "<tr><td>" . $productsHtml . "</td><td style='text-align: center;'>{$productItem->quantity}</td></tr>";
+            $table .= "<tr><td>" . $productsHtml . "</td><td style='text-align: center;'>{$productItem->price}</td><td style='text-align: center;'>{$productItem->quantity}</td></tr>";
         }
+
+        $table .= "<tr><td>Tổng tiền</td><td></td><td style='text-align: center;'>{$item->amount}</td></tr>";
 
         $table .= "</tbody>";
         $table .= "</table>";
@@ -264,7 +266,7 @@ class OrderController extends Controller
         $html .= "<p>Danh sách đơn hàng</p>";
 
         $table = "<table style='width: 100%;border: solid;'>";
-        $table .= "<thead><tr><th style='border: 1px solid;'>Sản phẩm</th><th style='border: 1px solid;'>Số lượng</th></tr></thead>";
+        $table .= "<thead><tr><th style='border: 1px solid;'>Sản phẩm</th><th style='border: 1px solid;'>Đơn giá</th><th style='border: 1px solid;'>Số lượng</th></tr></thead>";
         $table .= "<tbody>";
         foreach ($item->products as $productItem) {
 
@@ -280,8 +282,10 @@ class OrderController extends Controller
 
             $productsHtml = '<div style="margin-top: 5px;display: flex;gap: 10px;"><div style="flex: 1;"><img style="height: 40px;" src="' . $productItem->product_image . '"></div><div style="flex: 5;"><div>' . $productItem->name . '</div>' . $productAttributeHtml . '</div></div>';
 
-            $table .= "<tr><td>" . $productsHtml . "</td><td style='text-align: center;'>{$productItem->quantity}</td></tr>";
+            $table .= "<tr><td>" . $productsHtml . "</td><td style='text-align: center;'>{$productItem->price}</td><td style='text-align: center;'>{$productItem->quantity}</td></tr>";
         }
+
+        $table .= "<tr><td>Tổng tiền</td><td></td><td style='text-align: center;'>{$item->amount}</td></tr>";
 
         $table .= "</tbody>";
         $table .= "</table>";

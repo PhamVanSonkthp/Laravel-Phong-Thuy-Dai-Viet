@@ -58,7 +58,7 @@
                                                     </div>
                                                     <div class="col-9" style="border-bottom: solid 1px aliceblue;border-top: solid 1px aliceblue;">
                                                         <div>
-                                                            {{\App\Models\Formatter::getShortDescriptionAttribute($productItem->name)}}
+                                                            {{\App\Models\Formatter::getShortDescriptionAttribute($productItem->name)}} - {{\App\Models\Formatter::formatMoney($productItem->price)}}đ
                                                         </div>
                                                         @if(!empty($productItem->order_size) || !empty($productItem->order_color))
                                                             <div>

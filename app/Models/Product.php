@@ -606,7 +606,7 @@ class Product extends Model implements Auditable
         return Helper::getTableName($this);
     }
 
-    public function avatar($size = "100x100")
+    public function avatar($size = "1000x1000")
     {
         return Helper::getDefaultIcon($this, $size);
     }

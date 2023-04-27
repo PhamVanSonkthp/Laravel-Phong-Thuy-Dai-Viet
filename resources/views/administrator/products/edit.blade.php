@@ -34,25 +34,75 @@
 
             @include('administrator.components.select_category' , ['name' => 'category_id' ,'html_category' => \App\Models\Category::getCategory(isset($item) ? optional($item)->category_id : ''), 'can_create' => true])
 
-            {{--            <div id="container_infor__attributes" class="p-3">--}}
-{{--                <label>--}}
-{{--                    Sản phẩm có biển thể--}}
-{{--                </label>--}}
-{{--                <button onclick="addValueAttribute()" type="button" class="btn btn-outline-success"><i--}}
-{{--                        class="fa-solid fa-plus"></i></button>--}}
-{{--            </div>--}}
 
-{{--            <div id="bassic_price">--}}
+            @if(count($item->productsAttributes) > 1)
+                @if(count($item->attributesJson()) == 1)
+                    <div class="p-3">
 
-{{--            </div>--}}
+                        <div class="card p-3">
 
-{{--            <input id="_headers" name="_headers" type="text" value="" class="hidden">--}}
+                            <div class="text-end">
+                                <button onclick="removeAllAttribute(this)" type="button" class="btn btn-danger"><i
+                                        class="fa-solid fa-x"></i></button>
+                            </div>
 
-{{--            <input id="_attributes" name="_attributes" type="text" value="" class="hidden">--}}
+                            <div class="d-flex mt-3">
+                                <input type="text" autocomplete="off" class="form-control header-_attributes"
+                                       oninput="renderTableAttribute()" placeholder="Thuộc tính" required="">
+                                <button type="button" onclick="addItemValueAttribute(this)" class="btn btn-success ms-1"
+                                        data-bs-original-title="" title=""><i class="fa-solid fa-plus"></i></button>
+                            </div>
 
-{{--            <div id="table_bassic_price" class="card p-3 m-3" style="display: none;">--}}
+                            <div class="ms-3 mt-3 me-3 d-flex align-items-center">
+                                <div class="d-flex mt-1">
+                                    <input type="text" autocomplete="off" class="form-control value-attribute"
+                                           required="" placeholder="Giá trị" oninput="renderTableAttribute()">
+                                </div>
 
-{{--            </div>--}}
+                                <div class="text-end">
+                                    <button onclick="_removeAttribute(this)" type="button" class="btn btn-danger"><i
+                                            class="fa-solid fa-x"></i></button>
+                                </div>
+                            </div>
+                            <div class="ms-3 mt-3 me-3 d-flex align-items-center">
+                                <div class="d-flex mt-1">
+                                    <input type="text" autocomplete="off" class="form-control value-attribute"
+                                           required="" placeholder="Giá trị" oninput="renderTableAttribute()">
+                                </div>
+
+                                <div class="text-end">
+                                    <button onclick="_removeAttribute(this)" type="button" class="btn btn-danger"><i
+                                            class="fa-solid fa-x"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @else
+
+                @endif
+            @else
+
+            @endif
+
+            <div id="container_infor__attributes" class="p-3">
+                <label>
+                    Sản phẩm có biển thể
+                </label>
+                <button onclick="addValueAttribute()" type="button" class="btn btn-outline-success"><i
+                        class="fa-solid fa-plus"></i></button>
+            </div>
+
+            <div id="bassic_price">
+
+            </div>
+
+            <input id="_headers" name="_headers" type="text" value="" class="hidden">
+
+            <input id="_attributes" name="_attributes" type="text" value="" class="hidden">
+
+            <div id="table_bassic_price" class="card p-3 m-3" style="display: none;">
+
+            </div>
 
             <div id="price1">
                 @include('administrator.components.require_input_number' , ['name' => 'price_import' , 'label' => 'Giá nhập'])
@@ -82,7 +132,7 @@
         let _headers = []
         let _attributes = []
 
-        function renderTableAttributeEdit(){
+        function renderTableAttributeEdit() {
 
             return;
 
@@ -91,7 +141,7 @@
 
             $('#table_bassic_price').html('')
 
-            if (_headers.length == 1){
+            if (_headers.length == 1) {
 
                 let header = `<div class="row mt-2">
                         <div class="col-4">
@@ -119,7 +169,7 @@
 
                 $('#table_bassic_price').append(header)
 
-                for (let i = 0 ; i < _attributes[0].length;i++){
+                for (let i = 0; i < _attributes[0].length; i++) {
                     let row = '<div class="row mt-2">'
                     row += `<div class="col-4">${_attributes[0][i]}</div>`
                     row += `<div class="col-1">
@@ -145,7 +195,7 @@
 
                     $('#table_bassic_price').append(row)
                 }
-            }else{
+            } else {
                 let header = `<div class="row mt-2">
                         <div class="col-2">
                             ${_headers[0]}
@@ -175,8 +225,8 @@
 
                 $('#table_bassic_price').append(header)
 
-                for (let i = 0 ; i < _attributes[0].length;i++){
-                    for(let j = 0 ; j < _attributes[1].length;j++){
+                for (let i = 0; i < _attributes[0].length; i++) {
+                    for (let j = 0; j < _attributes[1].length; j++) {
                         let row = '<div class="row mt-2">'
                         row += `<div class="col-2">${_attributes[0][i]}</div>`
                         row += `<div class="col-2">${_attributes[1][j]}</div>`
@@ -212,22 +262,22 @@
 
 
         @if($item->isProductVariation())
-            $('#price').hide()
-            $('#table_bassic_price').show()
+        $('#price').hide()
+        $('#table_bassic_price').show()
 
 
-            @foreach($item->attributesJson() as $attributesJsonItem)
-                _headers.push('size')
-                _attributes.push(@json($attributesJsonItem))
-            @endforeach
+        @foreach($item->attributesJson() as $attributesJsonItem)
+        _headers.push('size')
+        _attributes.push(@json($attributesJsonItem))
+        @endforeach
 
-            console.log(_headers)
-            console.log(_attributes)
+        console.log(_headers)
+        console.log(_attributes)
 
-            renderTableAttributeEdit()
+        renderTableAttributeEdit()
         @else
-            $('#price').show()
-            $('#table_bassic_price').hide()
+        $('#price').show()
+        $('#table_bassic_price').hide()
         @endif
 
     </script>
@@ -415,7 +465,7 @@
 
             $('#table_bassic_price').html('')
 
-            if (_headers.length == 1){
+            if (_headers.length == 1) {
 
                 let header = `<div class="row mt-2">
                         <div class="col-4">
@@ -443,7 +493,7 @@
 
                 $('#table_bassic_price').append(header)
 
-                for (let i = 0 ; i < _attributes[0].length;i++){
+                for (let i = 0; i < _attributes[0].length; i++) {
                     let row = '<div class="row mt-2">'
                     row += `<div class="col-4">${_attributes[0][i]}</div>`
                     row += `<div class="col-1">
@@ -469,7 +519,7 @@
 
                     $('#table_bassic_price').append(row)
                 }
-            }else{
+            } else {
                 let header = `<div class="row mt-2">
                         <div class="col-2">
                             ${_headers[0]}
@@ -499,8 +549,8 @@
 
                 $('#table_bassic_price').append(header)
 
-                for (let i = 0 ; i < _attributes[0].length;i++){
-                    for(let j = 0 ; j < _attributes[1].length;j++){
+                for (let i = 0; i < _attributes[0].length; i++) {
+                    for (let j = 0; j < _attributes[1].length; j++) {
                         let row = '<div class="row mt-2">'
                         row += `<div class="col-2">${_attributes[0][i]}</div>`
                         row += `<div class="col-2">${_attributes[1][j]}</div>`
