@@ -30,6 +30,102 @@ class Product extends Model implements Auditable
     public static function search($request)
     {
 
+        $results = Product::where('product_visibility_id', 2);
+
+        if (isset($request->category_id) && !empty($request->category_id)) {
+            $results = $results->where('category_id', $request->category_id);
+        }
+
+        if (isset($request->min_price)) {
+            $results = $results->where(function ($query) use ($request) {
+                $query->where('price_client', '>=', $request->min_price)
+                    ->orWhere('price_agent', '>=', $request->min_price);
+            });
+        }
+
+        if (isset($request->max_price)) {
+            $results = $results->where(function ($query) use ($request) {
+                $query->where('price_client', '<=', $request->max_price)
+                    ->orWhere('price_agent', '<=', $request->max_price);
+            });
+        }
+
+        if (isset($request->empty_inventory) && $request->empty_inventory == 2) {
+            $results = $results->where('inventory', '<=', 0);
+        }
+
+        if (isset($request->empty_inventory) && $request->empty_inventory == 1) {
+            $results = $results->where('inventory', '>', 0);
+        }
+
+        if (!empty($request->search_query)) {
+
+            $results = $results->where(function ($query) use ($request) {
+                $words = explode(" ", $request->search_query);
+
+                $query = $query->where(function ($results) use ($words) {
+                    foreach ($words as $word) {
+                        $results = $results->where('name', 'LIKE', "%{$word}%");
+                    }
+                });
+
+                $query = $query->orWhere("name", "LIKE", "%{$request->search_query}%");
+
+                $query = $query->orWhere(function ($results) use ($words) {
+                    foreach ($words as $word) {
+                        $results = $results->orWhere('name', 'LIKE', "%{$word}%");
+                    }
+                });
+
+            });
+
+
+            $words = explode(" ", $request->search_query);
+            $sort1 = "";
+            foreach ($words as $index => $word) {
+                $sort1 .= "name LIKE '%{$word}%'";
+
+                if ($index != count($words) - 1){
+                    $sort1 .= " AND ";
+                }
+            }
+
+            $sort = "CASE WHEN name LIKE '%{$request->search_query}%' THEN 1 WHEN {$sort1} THEN 2 ELSE 3 END, name";
+
+            $results = $results->orderByRaw($sort);
+        }
+
+        if (isset($request->sort_by_price)) {
+            if ($request->sort_by_price == "asc") {
+                $results = $results->orderBy('price_client', 'asc');
+            } else if ($request->sort_by_price == "desc") {
+                $results = $results->orderBy('price_client', 'DESC');
+            }
+        }
+
+        if (!empty($request->is_feature)) {
+            $results = $results->where('is_feature', $request->is_feature);
+        }
+
+        if (isset($request->is_best) && $request->is_best == 1) {
+            $results = $results->orderBy('sold', 'DESC');
+        } else {
+            $results = $results->latest();
+        }
+
+        if (isset($request->min_inventory) && strlen($request->min_inventory)) {
+            $results = $results->where('inventory', '>=', $request->min_inventory);
+        }
+
+        if (isset($request->min_inventory) && strlen($request->min_inventory)) {
+            $results = $results->where('inventory', '<=', $request->max_inventory);
+        }
+
+        $results->toSql();
+        $results = $results->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
+
+        return $results;
+
 
         $request->search_query = Helper::trimSpace($request->search_query);
 
@@ -291,7 +387,7 @@ class Product extends Model implements Auditable
 
     public function star()
     {
-        return rand(4, 5);
+        return 5;
     }
 
     public function toArray()

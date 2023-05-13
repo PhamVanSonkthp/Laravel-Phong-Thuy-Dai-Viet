@@ -305,7 +305,7 @@
                         title: $("#input_title").val(),
                         description: $("#input_description").val(),
                         user_id: $("#select_user_id").val(),
-                        app_id: $("#select_app_idt").val(),
+                        app_id: $("#select_app_id").val(),
                         time: $("#input_time").val(),
                         repeat: isCheckedInput("input_repeat") ? 1 : 0,
                         notiable: isCheckedInput("input_notiable") ? 1 : 0,

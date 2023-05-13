@@ -218,17 +218,17 @@ class ProductController extends Controller
                     $item['product_buy_empty_id'] = Formatter::trimer($cells[16]->getValue()) == 'continue' ? 2 : 1;
                     $item['price_import'] = Formatter::formatNumberToDatabase(Formatter::trimer($cells[18]->getValue()));
                     $item['price_client'] = Formatter::formatNumberToDatabase(Formatter::trimer($cells[18]->getValue()));
-                    $item['price_agent'] = Formatter::formatNumberToDatabase(Formatter::trimer($cells[18]->getValue()));
-                    $item['price_partner'] = Formatter::formatNumberToDatabase(Formatter::trimer($cells[18]->getValue()));
-                    $item['request_devilvery_id'] = Formatter::trimer($cells[20]->getValue()) == 'TRUE' ? 2 : 1;
-                    $item['bar_code'] = Formatter::trimer($cells[22]->getValue());
-                    $item['feature_image_path'] = Formatter::trimer($cells[23]->getValue());
-                    $item['seo_title'] = Formatter::trimer($cells[25]->getValue());
-                    $item['seo_description'] = Formatter::trimer($cells[26]->getValue());
-                    $item['weight'] = Formatter::trimer($cells[27]->getValue());
-                    $item['type_weight'] = Formatter::trimer($cells[28]->getValue());
-                    $item['primary_id'] = Formatter::trimer($cells[31]->getValue());
-                    $item['second_id'] = Formatter::trimer($cells[32]->getValue());
+                    $item['price_agent'] = Formatter::formatNumberToDatabase(Formatter::trimer($cells[19]->getValue()));
+                    $item['price_partner'] = Formatter::formatNumberToDatabase(Formatter::trimer($cells[20]->getValue()));
+                    $item['request_devilvery_id'] = Formatter::trimer($cells[22]->getValue()) == 'TRUE' ? 2 : 1;
+                    $item['bar_code'] = Formatter::trimer($cells[24]->getValue());
+                    $item['feature_image_path'] = Formatter::trimer($cells[25]->getValue());
+                    $item['seo_title'] = Formatter::trimer($cells[27]->getValue());
+                    $item['seo_description'] = Formatter::trimer($cells[28]->getValue());
+                    $item['weight'] = Formatter::trimer($cells[29]->getValue());
+                    $item['type_weight'] = Formatter::trimer($cells[30]->getValue());
+                    $item['primary_id'] = Formatter::trimer($cells[33]->getValue());
+                    $item['second_id'] = Formatter::trimer($cells[34]->getValue());
 
                     $item['group_product_id'] = $group_product_id;
 
