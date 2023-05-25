@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exports\ModelExport;
+use App\Exports\ProductExport;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Formatter;
@@ -90,7 +91,7 @@ class ProductController extends Controller
 
     public function export(Request $request)
     {
-        return Excel::download(new ModelExport($this->model, $request), $this->prefixView . '.xlsx');
+        return Excel::download(new ProductExport($this->model, $request), $this->prefixView . '.xlsx');
     }
 
     public function import(Request $request)

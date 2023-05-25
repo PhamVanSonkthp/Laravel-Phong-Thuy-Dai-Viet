@@ -5,7 +5,7 @@
 
     <a href="{{route('administrator.'.$prefixView.'.create')}}" class="btn btn-success float-end"><i class="fa-solid fa-plus"></i></a>
 
-    <a href="{{route('administrator.'.$prefixView.'.export')}}" class="btn btn-outline-primary float-end me-2" data-bs-original-title="" title="Export Excel"><i class="fa-sharp fa-solid fa-file-excel"></i></a>
+    <a onclick="onExport()" class="btn btn-outline-primary float-end me-2" data-bs-original-title="" title="Export Excel"><i class="fa-sharp fa-solid fa-file-excel"></i></a>
 
     @include('administrator.components.input_import_excel')
 
@@ -68,6 +68,9 @@
         ])
     }
 
+    function onExport() {
+        window.location.href = "{{route('administrator.'.$prefixView.'.export')}}" + window.location.search
+    }
 
 
 </script>
