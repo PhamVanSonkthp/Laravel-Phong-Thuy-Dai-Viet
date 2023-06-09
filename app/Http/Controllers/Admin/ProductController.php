@@ -160,10 +160,10 @@ class ProductController extends Controller
                         $group_product_id++;
                     }
 
-                    if (!empty(Formatter::trimer($cells[23]->getValue()))){
+                    if (!empty(Formatter::trimer($cells[25]->getValue()))){
                         $images[] = [
-                            'path' => Formatter::trimer($cells[23]->getValue()),
-                            'name' => Formatter::trimer($cells[24]->getValue()),
+                            'path' => Formatter::trimer($cells[25]->getValue()),
+                            'name' => Formatter::trimer($cells[26]->getValue()),
                         ];
                     }
 
@@ -173,8 +173,6 @@ class ProductController extends Controller
                     }
 
                     if ($cells[18]->getValue() == "") continue;
-
-
 
 
                     $item['name'] = Formatter::trimer($cells[1]->getValue());

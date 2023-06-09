@@ -2,8 +2,11 @@
 
 namespace App\Exports;
 
+use App\Models\Formatter;
 use App\Models\Helper;
+use App\Models\Product;
 use App\Models\User;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\FromQuery;
@@ -23,7 +26,7 @@ class ProductExport implements FromCollection, WithHeadings
     }
 
     /**
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public function collection()
     {
@@ -33,7 +36,21 @@ class ProductExport implements FromCollection, WithHeadings
 
         foreach ($items as $index => $item) {
 
+            $imagesAdded = [];
+
             $images = $item->images;
+
+            $image_path = $item->avatar('original');
+
+            if (!empty($image_path)){
+                if (!str_contains($image_path, "http")){
+                    $image_path = env("APP_URL") . $image_path;
+                }
+            }else{
+                $image_path = str_contains($item->feature_image_path , "http") ? $item->feature_image_path : env("APP_URL") . $item->feature_image_path;
+            }
+
+            $imagesAdded[] = $image_path;
 
             $itemTemp = [
                 Str::slug($item->name),
@@ -61,13 +78,13 @@ class ProductExport implements FromCollection, WithHeadings
                 $item->request_devilvery_id == 1 ? 'FALSE' : "TRUE",
                 $item->vat_id ? "FALSE" : "TRUE",
                 $item->bar_code,
-                $item->feature_image_path,
+                $image_path,
                 "",
                 "",
                 "",
                 $item->weight,
                 $item->type_weight,
-                $item->feature_image_path,
+                $image_path,
                 $item->description,
                 $item->primary_id,
                 $item->second_id,
@@ -76,9 +93,29 @@ class ProductExport implements FromCollection, WithHeadings
             $itemsExport[] = $itemTemp;
 
             if($item->isProductVariation()){
-                foreach($item->attributes() as $key => $itemAttribute){
+                $jumped = 0;
 
-                    $productAtt = \App\Models\Product::find($itemAttribute['id']);
+                foreach($item->attributes() as $key => $itemAttribute){
+                    $jumped = $key + 1;
+
+                    $productAtt = Product::find($itemAttribute['id']);
+
+                    $image_path = str_contains($productAtt->feature_image_path , "http") ? $productAtt->feature_image_path : env("APP_URL") . optional($productAtt)->feature_image_path;
+
+                    if ($key + 1 < count($images)){
+                        $image_path = $images[$key + 1]->image_path;
+
+                        if (!str_contains($image_path , "http")){
+                            $image_path = env("APP_URL") . $image_path;
+                        }
+                    }
+
+                    if (in_array($image_path, $imagesAdded)){
+                        $image_path = "";
+                    }else{
+                        $imagesAdded[] = $image_path;
+                    }
+
                     $itemTemp = [
                         Str::slug($item->name),
                         "",
@@ -95,7 +132,7 @@ class ProductExport implements FromCollection, WithHeadings
                         "",
                         optional($productAtt)->sku,
                         "",
-                        \App\Models\Formatter::formatNumber($itemAttribute['inventory']),
+                        Formatter::formatNumber($itemAttribute['inventory']),
                         optional($productAtt)->product_buy_empty_id == 2 ? "" : 'deny',
                         "",
                         optional($productAtt)->price_client,
@@ -105,13 +142,13 @@ class ProductExport implements FromCollection, WithHeadings
                         optional($productAtt)->request_devilvery_id == 1 ? 'FALSE' : "TRUE",
                         optional($productAtt) ? "FALSE" : "TRUE",
                         optional($productAtt)->bar_code,
-                        optional($productAtt)->feature_image_path,
+                        $image_path,
                         "",
                         "",
                         "",
                         optional($productAtt)->weight,
                         optional($productAtt)->type_weight,
-                        optional($productAtt)->feature_image_path,
+                        $image_path,
                         optional($productAtt)->description,
                         optional($productAtt)->primary_id,
                         optional($productAtt)->second_id,
@@ -119,8 +156,69 @@ class ProductExport implements FromCollection, WithHeadings
                     $itemsExport[] = $itemTemp;
 
                 }
+
+                foreach ($images as $key => $image){
+
+                    if ($jumped >= $key) continue;
+
+                    $image_path = str_contains($image->image_path , "http") ? $image->image_path : env("APP_URL") . $image->image_path;
+
+                    if (in_array($image_path, $imagesAdded)){
+                        $itemTemp = [
+                            Str::slug($item->name),
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            $image_path,
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            $item->primary_id,
+                            "",
+                        ];
+
+                        $itemsExport[] = $itemTemp;
+                    }
+                }
+
             }else{
-                foreach ($images as $image){
+                foreach ($images as $key => $image){
+
+                    if ($key == 0) continue;
+
+                    $image_path = str_contains($image->image_path , "http") ? $image->image_path : env("APP_URL") . $image->image_path;
+
+                    if (in_array($image_path, $imagesAdded)){
+                        $image_path = "";
+                    }else{
+                        $imagesAdded[] = $image_path;
+                    }
+
                     $itemTemp = [
                         Str::slug($item->name),
                         "",
@@ -147,7 +245,7 @@ class ProductExport implements FromCollection, WithHeadings
                         "",
                         "",
                         "",
-                        $image->image_path,
+                        $image_path,
                         "",
                         "",
                         "",
