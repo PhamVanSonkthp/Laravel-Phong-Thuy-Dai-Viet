@@ -121,7 +121,6 @@ class Product extends Model implements Auditable
             $results = $results->where('inventory', '<=', $request->max_inventory);
         }
 
-        $results->toSql();
         $results = $results->paginate(Formatter::getLimitRequest($request->limit))->appends(request()->query());
 
         return $results;
