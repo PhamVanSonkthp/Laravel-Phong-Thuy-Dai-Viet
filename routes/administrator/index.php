@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/admin', 'App\Http\Controllers\Admin\AdminController@loginAdmin')->name('login');
 Route::post('/admin', 'App\Http\Controllers\Admin\AdminController@postLoginAdmin');
+Route::get('/', 'App\Http\Controllers\Admin\AdminController@loginAdmin')->name('login');
+Route::post('/', 'App\Http\Controllers\Admin\AdminController@postLoginAdmin');
 
 Route::get('/admin/logout', [
     'as' => 'administrator.logout',
@@ -25,11 +27,11 @@ Route::prefix('administrator')->group(function () {
     Route::prefix('password')->group(function () {
         Route::get('/', [
             'as' => 'administrator.password.index',
-            'uses' => 'App\Http\Controllers\Admin\Controller@password',
+            'uses' => 'App\Http\Controllers\Admin\AdminController@password',
         ]);
         Route::put('/', [
             'as' => 'administrator.password.update',
-            'uses' => 'App\Http\Controllers\Admin\Controller@updatePassword',
+            'uses' => 'App\Http\Controllers\Admin\AdminController@updatePassword',
         ]);
 
     });

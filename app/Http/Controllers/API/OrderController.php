@@ -53,6 +53,7 @@ class OrderController extends Controller
 
         $item = $this->model->create([
             'user_id' => auth()->id(),
+            'address' => $request->address,
         ]);
 
         $amount = 0;

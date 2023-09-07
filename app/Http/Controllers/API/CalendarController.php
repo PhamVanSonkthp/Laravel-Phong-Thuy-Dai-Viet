@@ -32,12 +32,9 @@ class CalendarController extends Controller
     {
         $item = SunCalendar::whereDate('date', $id)->first();
 
-        Log::info($item);
-
         if (empty($item)) return abort(404);
 
         $item = $this->model->find($item->calendar_id);
-        Log::info($item);
 
         return response()->json($item);
     }

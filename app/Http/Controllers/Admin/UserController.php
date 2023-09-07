@@ -65,11 +65,13 @@ class UserController extends Controller
 
     public function delete(Request $request, $id)
     {
+        $this->forceDelete = true;
         return $this->model->deleteByQuery($request, $id, $this->forceDelete);
     }
 
     public function deleteManyByIds(Request $request)
     {
+        $this->forceDelete = true;
         return $this->model->deleteManyByIds($request, $this->forceDelete);
     }
 

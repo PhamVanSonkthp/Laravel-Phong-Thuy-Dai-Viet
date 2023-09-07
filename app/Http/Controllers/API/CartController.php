@@ -33,7 +33,16 @@ class CartController extends Controller
     {
         $queries = ['user_id' => auth()->id()];
         $results = RestfulAPI::response($this->model, $request, $queries);
-        return response()->json($results);
+
+        $resultsFilter = [];
+
+        foreach ($results as $result){
+            if (empty($result->product)) continue;
+            $resultsFilter[] = $result;
+        }
+
+        return response()->json($resultsFilter);
+
     }
 
     public function listNotAuth(Request $request)
