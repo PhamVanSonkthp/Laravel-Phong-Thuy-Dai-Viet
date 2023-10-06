@@ -41,7 +41,9 @@ class CartController extends Controller
             $resultsFilter[] = $result;
         }
 
-        return response()->json($resultsFilter);
+        return response()->json([
+            'data' => $resultsFilter
+        ]);
 
     }
 

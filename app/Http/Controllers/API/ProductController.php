@@ -37,6 +37,10 @@ class ProductController extends Controller
 
         $results = $this->model->search($request);
 
+        $results = $results->toArray();
+
+        $results['search_query'] = $request->search_query;
+
         return response()->json($results);
     }
 
