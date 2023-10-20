@@ -53,7 +53,7 @@ class OrderController extends Controller
 
         $item = $this->model->create([
             'user_id' => auth()->id(),
-            'address' => $request->address,
+            'address' => $request->address ?? auth()->user()->address,
         ]);
 
         $amount = 0;
@@ -132,7 +132,7 @@ class OrderController extends Controller
         $html = "<p>Thông tin khách hàng</p>";
         $html .= "<div>Họ và tên: " . auth()->user()->name . "</div>";
         $html .= "<div>Số điện thoại: " . auth()->user()->phone . "</div>";
-        $html .= "<div>Địa chỉ: " . auth()->user()->address . "</div>";
+        $html .= "<div>Địa chỉ: " . $request->address ?? auth()->user()->address . "</div>";
 
         $html .= "<p>Danh sách đơn hàng</p>";
 

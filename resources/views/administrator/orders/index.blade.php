@@ -36,6 +36,7 @@
                                     <th>Tổng tiền</th>
                                     <th></th>
                                     <th>Trạng thái</th>
+                                    <th>Địa chỉ</th>
                                     <th>Hành động</th>
                                 </tr>
                                 </thead>
@@ -85,6 +86,9 @@
                                         </td>
                                         <td class="text-status">
                                             {{ optional($item->orderStatus)->name}}
+                                        </td>
+                                        <td class="text-status">
+                                            {{ $item->address}}
                                         </td>
                                         <td>
 
