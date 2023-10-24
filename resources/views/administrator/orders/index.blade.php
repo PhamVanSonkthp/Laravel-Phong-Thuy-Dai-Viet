@@ -32,6 +32,7 @@
                                                onclick="onSelectCheckboxDeleteItem()"></th>
                                     <th>#</th>
                                     <th>Khách hàng</th>
+                                    <th>SĐT</th>
                                     <th>Sản phẩm</th>
                                     <th>Tổng tiền</th>
                                     <th></th>
@@ -48,7 +49,10 @@
                                         </td>
                                         <td>{{$item->id}}</td>
                                         <td>
-                                            <a>{{optional($item->user)->name}}</a>
+                                            <a> {{$item->name ?? optional($item->user)->name}}</a>
+                                        </td>
+                                        <td>
+                                            <a>{{$item->phone ?? optional($item->user)->phone}}</a>
                                         </td>
                                         <td>
                                             @foreach($item->products as $productItem)

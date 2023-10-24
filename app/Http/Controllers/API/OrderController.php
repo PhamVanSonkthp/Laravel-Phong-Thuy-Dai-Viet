@@ -23,6 +23,7 @@ use App\Models\VoucherUsed;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -54,6 +55,8 @@ class OrderController extends Controller
         $item = $this->model->create([
             'user_id' => auth()->id(),
             'address' => $request->address ?? auth()->user()->address,
+            'name' => $request->name ?? auth()->user()->name,
+            'phone' => $request->phone ?? auth()->user()->phone,
         ]);
 
         $amount = 0;
@@ -130,8 +133,8 @@ class OrderController extends Controller
         DB::commit();
 
         $html = "<p>Thông tin khách hàng</p>";
-        $html .= "<div>Họ và tên: " . auth()->user()->name . "</div>";
-        $html .= "<div>Số điện thoại: " . auth()->user()->phone . "</div>";
+        $html .= "<div>Họ và tên: " . $request->name ?? auth()->user()->name . "</div>";
+        $html .= "<div>Số điện thoại: " . $request->phone ?? auth()->user()->phone . "</div>";
         $html .= "<div>Địa chỉ: " . $request->address ?? auth()->user()->address . "</div>";
 
         $html .= "<p>Danh sách đơn hàng</p>";
@@ -193,6 +196,9 @@ class OrderController extends Controller
 
         $item = $this->model->create([
             'user_id' => 0,
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'address' => $request->address,
         ]);
 
         foreach ($request->product_ids as $index => $product_id) {
