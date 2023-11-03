@@ -133,9 +133,9 @@ class OrderController extends Controller
         DB::commit();
 
         $html = "<p>Thông tin khách hàng</p>";
-        $html .= "<div>Họ và tên: " . $request->name ?? auth()->user()->name . "</div>";
-        $html .= "<div>Số điện thoại: " . $request->phone ?? auth()->user()->phone . "</div>";
-        $html .= "<div>Địa chỉ: " . $request->address ?? auth()->user()->address . "</div>";
+        $html .= "<div>Họ và tên: " . ($request->name ?? auth()->user()->name) . "</div>";
+        $html .= "<div>Số điện thoại: " . ($request->phone ?? auth()->user()->phone) . "</div>";
+        $html .= "<div>Địa chỉ: " . ($request->address ?? auth()->user()->address) . "</div>";
 
         $html .= "<p>Danh sách đơn hàng</p>";
 
