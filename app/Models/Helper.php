@@ -96,7 +96,7 @@ class Helper extends Model
         $columns = Schema::getColumnListing($object->getTableName());
         $query = $object->query();
 
-        $searchLikeColumns = ['name', 'title', 'primary_id', 'second_id', 'search_query','sku'];
+        $searchLikeColumns = ['name', 'title', 'primary_id', 'second_id', 'search_query','sku','phone'];
         $searchColumnBanned = ['limit', 'page', 'with_trashed'];
 
         if (!empty($request)) {

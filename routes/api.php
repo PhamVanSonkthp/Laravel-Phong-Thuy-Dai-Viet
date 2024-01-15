@@ -16,12 +16,15 @@ use App\Http\Controllers\API\SystemBranchController;
 use App\Http\Controllers\API\VoucherController;
 use App\Http\Requests\Chat\ParticipantAddRequest;
 use App\Http\Requests\PusherChatRequest;
+use App\Models\Calendar;
 use App\Models\Chat;
 use App\Models\ChatGroup;
 use App\Models\ChatImage;
+use App\Models\Helper;
 use App\Models\Notification;
 use App\Models\ParticipantChat;
 use App\Models\RestfulAPI;
+use App\Models\SunCalendar;
 use App\Traits\StorageImageTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -48,6 +51,20 @@ Route::prefix('cron')->group(function () {
 });
 
 Route::prefix('public')->group(function () {
+
+    Route::get('weather', function (Request $request){
+        $item = SunCalendar::whereDate('date', \Carbon\Carbon::today())->first();
+        if (!empty($item)) {
+            $item = Calendar::find($item->calendar_id);
+            if (!empty($item)){
+                return response()->json([
+                    'name' => $item->weather,
+                    'quotation' => trim(optional($item->quotation)->description),
+                ]);
+            }
+        }
+
+    });
 
     Route::prefix('products')->group(function () {
         Route::get('/', [ProductController::class, 'list']);

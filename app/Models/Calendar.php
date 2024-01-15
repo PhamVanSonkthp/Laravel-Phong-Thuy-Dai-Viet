@@ -6,6 +6,7 @@ use App\Traits\DeleteModelTrait;
 use App\Traits\StorageImageTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -20,55 +21,68 @@ class Calendar extends Model implements Auditable
 
     // begin
 
-    public function sunCalendar(){
+    public function sunCalendar()
+    {
         return $this->hasOne(SunCalendar::class);
     }
 
-    public function lunaCalendar(){
+    public function lunaCalendar()
+    {
         return $this->hasOne(LunaCalendar::class);
     }
 
-    public function timeCalendar(){
+    public function timeCalendar()
+    {
         return $this->hasMany(TimeCalendar::class);
     }
 
-    public function timeZodiacCalendar(){
+    public function timeZodiacCalendar()
+    {
         return $this->hasMany(TimeZodiacCalendar::class);
     }
 
-    public function fiveElementCalendar(){
+    public function fiveElementCalendar()
+    {
         return $this->hasOne(FiveElementCalendar::class);
     }
 
-    public function dayZodiacCalendar(){
+    public function dayZodiacCalendar()
+    {
         return $this->hasOne(DayZodiacCalendar::class);
     }
 
-    public function trucDayCalendar(){
+    public function trucDayCalendar()
+    {
         return $this->hasOne(TrucDayCalendar::class);
     }
 
-    public function thapNhiBatTuDayCalendar(){
+    public function thapNhiBatTuDayCalendar()
+    {
         return $this->hasOne(ThapNhiBatTuDayCalendar::class);
     }
 
-    public function goodStarCalendar(){
+    public function goodStarCalendar()
+    {
         return $this->hasMany(GoodStarCalendar::class);
     }
 
-    public function badStarCalendar(){
+    public function badStarCalendar()
+    {
         return $this->hasMany(BadStarCalendar::class);
     }
 
-    public function tongHopBangKeCalendar(){
+    public function tongHopBangKeCalendar()
+    {
         return $this->hasOne(TongHopBangKeCalendar::class);
     }
 
-    public function gioLyThuanPhongCalendar(){
+    public function gioLyThuanPhongCalendar()
+    {
         return $this->hasMany(GioLyThuanPhongCalendar::class);
     }
 
-    public function quotation(){
+    public function quotation()
+    {
         return $this->belongsTo(Quotation::class);
     }
 
@@ -95,14 +109,28 @@ class Calendar extends Model implements Auditable
         $array['good_star_calendar'] = $this->goodStarCalendar;
         $array['bad_star_calendar'] = $this->badStarCalendar;
         $array['tong_hop_bang_ke_calendar'] = $this->tongHopBangKeCalendar;
-        $array['gio_ly_thuan_phong_calendar'] = $this->gioLyThuanPhongCalendar;
+
+
+        $filterGioLyThuanPhongCalendars = [];
+
+        $gioLyThuanPhongCalendars = $this->gioLyThuanPhongCalendar;
+
+        foreach ($gioLyThuanPhongCalendars as $gioLyThuanPhongCalendar) {
+
+            $gioLyThuanPhongCalendar['description'] = Str::ucfirst(Str::lower($gioLyThuanPhongCalendar['description']));
+
+            $filterGioLyThuanPhongCalendars[] = $gioLyThuanPhongCalendar;
+        }
+
+        $array['gio_ly_thuan_phong_calendar'] = $filterGioLyThuanPhongCalendars;
+
         $array['quotation'] = $this->quotation;
         return $array;
     }
 
     public function avatar($size = "100x100")
     {
-       return Helper::getDefaultIcon($this, $size);
+        return Helper::getDefaultIcon($this, $size);
     }
 
     public function image()
@@ -115,8 +143,9 @@ class Calendar extends Model implements Auditable
         return Helper::images($this);
     }
 
-    public function createdBy(){
-        return $this->hasOne(User::class,'id','created_by_id');
+    public function createdBy()
+    {
+        return $this->hasOne(User::class, 'id', 'created_by_id');
     }
 
     public function searchByQuery($request, $queries = [], $randomRecord = null, $makeHiddens = null, $isCustom = false)
@@ -129,7 +158,7 @@ class Calendar extends Model implements Auditable
         $dataInsert = [
             'title' => $request->title,
             'content' => $request->contents,
-            'slug' => Helper::addSlug($this,'slug', $request->title),
+            'slug' => Helper::addSlug($this, 'slug', $request->title),
         ];
 
         $item = Helper::storeByQuery($this, $request, $dataInsert);
@@ -142,7 +171,7 @@ class Calendar extends Model implements Auditable
         $dataUpdate = [
             'title' => $request->title,
             'content' => $request->contents,
-            'slug' => Helper::addSlug($this,'slug', $request->title),
+            'slug' => Helper::addSlug($this, 'slug', $request->title),
         ];
         $item = Helper::updateByQuery($this, $request, $id, $dataUpdate);
         return $this->findById($item->id);
@@ -158,7 +187,8 @@ class Calendar extends Model implements Auditable
         return Helper::deleteManyByIds($this, $request, $forceDelete);
     }
 
-    public function findById($id){
+    public function findById($id)
+    {
         $item = $this->find($id);
         return $item;
     }

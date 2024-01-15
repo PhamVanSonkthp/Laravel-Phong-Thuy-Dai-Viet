@@ -152,9 +152,6 @@
     <script>
         function onChangeInventory(id, key, value){
 
-            console.log(key)
-            console.log(value)
-
             callAjax(
                 "PUT",
                 "{{route('ajax.administrator.products.update')}}",

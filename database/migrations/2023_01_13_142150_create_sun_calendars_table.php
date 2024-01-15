@@ -15,7 +15,7 @@ class CreateSunCalendarsTable extends Migration
     {
         Schema::create('sun_calendars', function (Blueprint $table) {
             $table->id();
-            $table->date('date');
+            $table->date('date')->index();
             $table->integer('day_of_month');
             $table->integer('month');
             $table->integer('year');
